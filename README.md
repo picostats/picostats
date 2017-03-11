@@ -1,4 +1,4 @@
-# PicoStats - Free & Open Source Web Analytics
+# PicoStats - Free and Open Source Web Analytics Software
 
 [PicoStats.com](https://www.picostats.com)
 
