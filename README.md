@@ -1,2 +1,2 @@
-# picostats
+# PicoStats
 Main PicoStats application.
