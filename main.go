@@ -9,9 +9,7 @@ func main() {
     app := iris.New()
     app.Adapt(httprouter.New())
 
-    app.Get("/", func(ctx *iris.Context) {
-        ctx.Writef("Hi %s", "iris")
-    })
+    app.Get("/", home)
 
     app.Listen(":8080")
 }
