@@ -1,6 +1,6 @@
-# PicoStats - Free and Open Source Web Analytics Software
+# PicoStats
 
-[PicoStats.com](https://www.picostats.com)
+Free and Open Source Web Analytics Software - [PicoStats](https://www.picostats.com)
 
 ### What is PicoStats?
 
