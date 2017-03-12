@@ -1,23 +1,24 @@
 package main
 
 import (
-    "log"
-
-    "gopkg.in/kataras/iris.v6"
-    "gopkg.in/kataras/iris.v6/adaptors/httprouter"
+	"github.com/jinzhu/gorm"
+	"gopkg.in/kataras/iris.v6"
 )
 
 var conf *config
 
+var app *iris.Framework
+
+var db *gorm.DB
+
 func main() {
-    app := iris.New()
-    app.Adapt(httprouter.New())
+	initIris()
 
-    initConfig()
+	initConfig()
 
-    log.Println(conf.RedisUrl)
+	initDB()
 
-    app.Get("/", home)
+	app.Get("/", home)
 
-    app.Listen(":8080")
+	app.Listen(":8080")
 }
