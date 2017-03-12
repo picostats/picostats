@@ -4,10 +4,11 @@ TODO
 - create MVP javascript
 - create MVP application
 - create a logo
-- install letsencrypt on server
 
 DONE
 
 * buy a domain
 * buy first droplet
 * create GitHub organization and repozitory
+* first deploy
+* install letsencrypt on server
