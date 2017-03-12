@@ -4,10 +4,6 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// func GenerateAnonymousUser() sessionauth.User {
-// 	return &User{}
-// }
-
 type User struct {
 	gorm.Model
 	Email         string `sql:"size:255" unique_index`

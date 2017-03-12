@@ -6,16 +6,15 @@ import (
 	"os"
 )
 
-// Config represents a config object
 type Config struct {
-	DBUrl             string `json:"db_url"`
-	AppUrl            string `json:"app_url"`
-	RedisUrl          string `json:"redis_url"`
-	LogSQL            bool   `json:"log_sql"`
-	AllowRegistration bool   `json:"allow_registration"`
+	DBUrl               string `json:"db_url"`
+	AppUrl              string `json:"app_url"`
+	RedisUrl            string `json:"redis_url"`
+	ListenAddr          string `json:"listen_addr"`
+	LogSQL              bool   `json:"log_sql"`
+	RegistrationEnabled bool   `json:"registration_enabled"`
 }
 
-// Load method loads config file in config object
 func (c *Config) load(configFile string) error {
 	file, err := os.Open(configFile)
 

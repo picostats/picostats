@@ -1,5 +1,7 @@
 TODO
 
+v 1.0 beta
+
 - models
 - login
 - logout
@@ -10,8 +12,18 @@ TODO
 - stats - worker
 - mvp website
 - create a logo
+- cli options
+
+v 1.1 beta
+
+- drag and drop widgets
+- more data about the visitor
+- support for other databases
+- website monitoring
 
 DONE
+
+v 1.0 beta
 
 * buy a domain
 * buy first droplet

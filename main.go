@@ -26,5 +26,5 @@ func main() {
 
 	// POST view handlers
 
-	app.Listen(":8080")
+	app.Listen(conf.ListenAddr)
 }
