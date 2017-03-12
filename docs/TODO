@@ -1,11 +1,14 @@
 TODO
 
-- database
 - models
+- login
+- logout
+- registration
+- email verification
+- stats - javascript
+- stats - handling requests
+- stats - worker
 - mvp website
-- javascript
-- worker
-- application
 - create a logo
 
 DONE
@@ -16,3 +19,4 @@ DONE
 * first deploy
 * install letsencrypt on server
 * config
+* database

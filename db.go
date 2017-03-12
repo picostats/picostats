@@ -19,9 +19,9 @@ func initDB() *gorm.DB {
 	db.DB().Ping()
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
-	// db.LogMode(Config.LogSQL)
+	db.LogMode(conf.LogSQL)
 
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&User{}, &Website{})
 
 	return &db
 }

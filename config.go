@@ -6,15 +6,17 @@ import (
 	"os"
 )
 
-// config represents a config object
-type config struct {
-	DBUrl    string `json:"db_url"`
-	AppUrl   string `json:"app_url"`
-	RedisUrl string `json:"redis_url"`
+// Config represents a config object
+type Config struct {
+	DBUrl             string `json:"db_url"`
+	AppUrl            string `json:"app_url"`
+	RedisUrl          string `json:"redis_url"`
+	LogSQL            bool   `json:"log_sql"`
+	AllowRegistration bool   `json:"allow_registration"`
 }
 
 // Load method loads config file in config object
-func (c *config) load(configFile string) error {
+func (c *Config) load(configFile string) error {
 	file, err := os.Open(configFile)
 
 	if err != nil {
@@ -35,6 +37,6 @@ func (c *config) load(configFile string) error {
 }
 
 func initConfig() {
-	conf = &config{}
+	conf = &Config{}
 	conf.load("config.json")
 }
