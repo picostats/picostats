@@ -22,12 +22,14 @@ func signInPostView(ctx *iris.Context) {
 		log.Println("[views.go] Error reading SignInForm: %s", err)
 	}
 
-	user := &User{Email: sif.Email}
-	db.First(user)
+	user := &User{}
+	db.Where("email = ?", sif.Email).First(user)
 
 	if user.ID != 0 {
 		if user.Password == getMD5Hash(sif.Password) {
-
+			signIn(ctx, user)
+			ctx.Redirect(conf.AppUrl + APP_PATH)
+			return
 		} else {
 			err := errors.New("Email or password is wrong, please try again.")
 			pd.Errors = append(pd.Errors, &err)
@@ -43,7 +45,8 @@ func signInPostView(ctx *iris.Context) {
 }
 
 func signOutView(ctx *iris.Context) {
-	ctx.Writef("Hi %s", "iris")
+	signOut(ctx)
+	ctx.Redirect(conf.AppUrl + APP_PATH + "/sign-in")
 }
 
 func signUpView(ctx *iris.Context) {
@@ -61,12 +64,15 @@ func signUpPostView(ctx *iris.Context) {
 		log.Println("[views.go] Error reading SignUpForm: %s", err)
 	}
 
-	user := &User{Email: suf.Email}
-	db.First(user)
+	user := &User{}
+	db.Where("email = ?", suf.Email).First(user)
 
 	if user.ID == 0 {
 		if suf.Password1 == suf.Password2 {
-
+			user := &User{Email: suf.Email, Password: getMD5Hash(suf.Password1)}
+			db.Create(user)
+			ctx.Redirect(conf.AppUrl + APP_PATH)
+			return
 		} else {
 			err := errors.New("Passwords don't match, please try again.")
 			pd.Errors = append(pd.Errors, &err)

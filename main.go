@@ -28,6 +28,7 @@ func main() {
 	app.Get(APP_PATH, loginRequired, dashboardView)
 	app.Get(APP_PATH+"/sign-in", signInView)
 	app.Get(APP_PATH+"/sign-up", signUpView)
+	app.Get(APP_PATH+"/sign-out", signOutView)
 
 	// POST view handlers
 	app.Post(APP_PATH+"/sign-in", signInPostView)

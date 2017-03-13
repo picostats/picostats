@@ -2,9 +2,6 @@ TODO
 
 v 1.0 beta
 
-- sign in
-- sign out
-- sign up
 - email verification
 - stats - javascript
 - stats - handling requests
@@ -33,3 +30,6 @@ v 1.0 beta
 * database
 * models
 * dev mode
+* sign in
+* sign out
+* sign up
