@@ -2,9 +2,9 @@ TODO
 
 v 1.0 beta
 
-- login
-- logout
-- registration
+- sign in
+- sign out
+- sign up
 - email verification
 - stats - javascript
 - stats - handling requests

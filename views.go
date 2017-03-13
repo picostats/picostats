@@ -6,12 +6,16 @@ import (
 
 func signInView(ctx *iris.Context) {
 	pd := newPageData(ctx)
-	ctx.Render("login.html", pd)
+	ctx.Render("sign-in.html", pd, iris.RenderOptions{"layout": iris.NoLayout})
 }
 
 func signInPostView(ctx *iris.Context) {
 	pd := newPageData(ctx)
-	ctx.Render("login.html", pd)
+	ctx.Render("sign-in.html", pd, iris.RenderOptions{"layout": iris.NoLayout})
+}
+
+func signOutView(ctx *iris.Context) {
+	ctx.Writef("Hi %s", "iris")
 }
 
 func signUpView(ctx *iris.Context) {
