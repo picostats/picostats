@@ -9,7 +9,13 @@ import (
 func initIris() *iris.Framework {
 	app := iris.New()
 	app.Adapt(httprouter.New())
-	app.Adapt(view.HTML("./templates", ".html"))
 	app.StaticWeb("/public", "./public")
+	if conf.Dev {
+		app.Adapt(iris.DevLogger())
+		app.Adapt(view.HTML("./templates", ".html").Reload(true))
+	} else {
+		app.Adapt(view.HTML("./templates", ".html"))
+	}
+
 	return app
 }

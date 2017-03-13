@@ -12,11 +12,11 @@ var conf *Config
 var db *gorm.DB
 
 func main() {
-	// Initializes Iris web framework
-	app = initIris()
-
 	// Loads and parses config.json file to struct
 	conf = initConfig()
+
+	// Initializes Iris web framework
+	app = initIris()
 
 	// Connects to the database and does automatic migrations
 	db = initDB()

@@ -12,6 +12,7 @@ type Config struct {
 	RedisUrl            string `json:"redis_url"`
 	ListenAddr          string `json:"listen_addr"`
 	LogSQL              bool   `json:"log_sql"`
+	Dev                 bool   `json:"dev"`
 	RegistrationEnabled bool   `json:"registration_enabled"`
 }
 

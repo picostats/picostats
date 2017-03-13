@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"gopkg.in/kataras/iris.v6"
 )
 
@@ -11,6 +13,18 @@ func signInView(ctx *iris.Context) {
 
 func signInPostView(ctx *iris.Context) {
 	pd := newPageData(ctx)
+
+	sif := &SignInForm{}
+	err := ctx.ReadForm(sif)
+	if err != nil {
+		log.Println("[views.go] Error reading SignInForm: %s", err)
+	}
+
+	user := &User{Email: sif.Email}
+	db.First(user)
+
+	log.Println(user.ID)
+
 	ctx.Render("sign-in.html", pd, iris.RenderOptions{"layout": iris.NoLayout})
 }
 
