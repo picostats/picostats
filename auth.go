@@ -14,17 +14,17 @@ func loginRequired(ctx *iris.Context) {
 
 func signIn(ctx *iris.Context, user *User) {
 	session := ctx.Session()
-	session.Set("userid", user.ID)
+	session.Set(USER_ID, user.ID)
 }
 
 func signOut(ctx *iris.Context) {
 	session := ctx.Session()
-	session.Delete("userid")
+	session.Delete(USER_ID)
 }
 
 func isSignedIn(ctx *iris.Context) bool {
 	session := ctx.Session()
-	userId := session.Get("userid")
+	userId := session.Get(USER_ID)
 	if userId == nil {
 		return false
 	}

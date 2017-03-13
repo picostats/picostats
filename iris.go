@@ -16,6 +16,5 @@ func initIris() *iris.Framework {
 	} else {
 		app.Adapt(view.HTML("./templates", ".html").Layout("layout.html"))
 	}
-
 	return app
 }

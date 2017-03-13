@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
-	// "errors"
 
 	"gopkg.in/kataras/iris.v6"
 )
@@ -18,6 +17,12 @@ type PageData struct {
 func newPageData(ctx *iris.Context) *PageData {
 	pd := &PageData{}
 	pd.Conf = conf
+	if isSignedIn(ctx) {
+		session := ctx.Session()
+		userId := session.Get(USER_ID)
+		pd.User = &User{}
+		db.First(pd.User, userId.(uint))
+	}
 	return pd
 }
 
