@@ -8,6 +8,10 @@ import (
 )
 
 func signInView(ctx *iris.Context) {
+	if isSignedIn(ctx) {
+		ctx.Redirect(conf.AppUrl + APP_PATH)
+		return
+	}
 	pd := newPageData(ctx)
 	pd.Form = SignInForm{}
 	ctx.Render("sign-in.html", pd, iris.RenderOptions{"layout": "layout2.html"})
@@ -50,6 +54,10 @@ func signOutView(ctx *iris.Context) {
 }
 
 func signUpView(ctx *iris.Context) {
+	if isSignedIn(ctx) {
+		ctx.Redirect(conf.AppUrl + APP_PATH)
+		return
+	}
 	pd := newPageData(ctx)
 	pd.Form = SignUpForm{}
 	ctx.Render("sign-up.html", pd, iris.RenderOptions{"layout": "layout2.html"})
@@ -89,7 +97,6 @@ func signUpPostView(ctx *iris.Context) {
 }
 
 func dashboardView(ctx *iris.Context) {
-	ctx.Session().Set("aaa", true)
-
-	ctx.Writef("Hi %s", "data")
+	pd := newPageData(ctx)
+	ctx.Render("dashboard.html", pd)
 }

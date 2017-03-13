@@ -12,9 +12,9 @@ func initIris() *iris.Framework {
 	app.StaticWeb("/public", "./public")
 	if conf.Dev {
 		app.Adapt(iris.DevLogger())
-		app.Adapt(view.HTML("./templates", ".html").Reload(true))
+		app.Adapt(view.HTML("./templates", ".html").Layout("layout.html").Reload(true))
 	} else {
-		app.Adapt(view.HTML("./templates", ".html"))
+		app.Adapt(view.HTML("./templates", ".html").Layout("layout.html"))
 	}
 
 	return app
