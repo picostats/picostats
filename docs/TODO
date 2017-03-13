@@ -2,7 +2,6 @@ TODO
 
 v 1.0 beta
 
-- models
 - login
 - logout
 - registration
@@ -32,3 +31,4 @@ v 1.0 beta
 * install letsencrypt on server
 * config
 * database
+* models

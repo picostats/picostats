@@ -14,6 +14,7 @@ type PageData struct {
 
 func newPageData(ctx *iris.Context) *PageData {
 	pd := &PageData{}
+	pd.Conf = conf
 	return pd
 }
 

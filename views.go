@@ -5,9 +5,13 @@ import (
 )
 
 func signInView(ctx *iris.Context) {
-	name, _ := ctx.Session().GetBoolean("aaa")
+	pd := newPageData(ctx)
+	ctx.Render("login.html", pd)
+}
 
-	ctx.Writef("Hi %s", name)
+func signInPostView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	ctx.Render("login.html", pd)
 }
 
 func signUpView(ctx *iris.Context) {

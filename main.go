@@ -29,6 +29,7 @@ func main() {
 	app.Get(APP_PATH+"/sign-in", signInView)
 
 	// POST view handlers
+	app.Post(APP_PATH+"/sign-in", signInPostView)
 
 	app.Listen(conf.ListenAddr)
 }

@@ -17,7 +17,9 @@ func initSession() {
 		DisableSubdomainPersistence: false,
 	})
 
-	rConf := service.Config{Addr: conf.RedisUrl}
+	rConf := service.Config{
+		Addr: conf.RedisUrl,
+	}
 
 	session.UseDatabase(redis.New(rConf))
 
