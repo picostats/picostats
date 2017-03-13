@@ -5,7 +5,8 @@ import (
 	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
 )
 
-func initIris() {
-	app = iris.New()
+func initIris() *iris.Framework {
+	app := iris.New()
 	app.Adapt(httprouter.New())
+	return app
 }

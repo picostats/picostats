@@ -13,16 +13,20 @@ var db *gorm.DB
 
 func main() {
 	// Initializes Iris web framework
-	initIris()
+	app = initIris()
 
 	// Loads and parses config.json file to struct
-	initConfig()
+	conf = initConfig()
 
 	// Connects to the database and does automatic migrations
-	initDB()
+	db = initDB()
+
+	// Initizalizes session and session cookie
+	initSession()
 
 	// GET view handlers
-	app.Get("/", home)
+	app.Get(APP_PATH, loginRequired, dashboardView)
+	app.Get(APP_PATH+"/sign-in", signInView)
 
 	// POST view handlers
 

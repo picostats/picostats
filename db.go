@@ -23,5 +23,5 @@ func initDB() *gorm.DB {
 
 	db.AutoMigrate(&User{}, &Website{})
 
-	return &db
+	return db
 }

@@ -35,7 +35,8 @@ func (c *Config) load(configFile string) error {
 	return nil
 }
 
-func initConfig() {
-	conf = &Config{}
+func initConfig() *Config {
+	conf := &Config{}
 	conf.load("config.json")
+	return conf
 }
