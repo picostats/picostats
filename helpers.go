@@ -3,13 +3,16 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
+	// "errors"
 
 	"gopkg.in/kataras/iris.v6"
 )
 
 type PageData struct {
-	User *User
-	Conf *Config
+	User   *User
+	Conf   *Config
+	Errors []*error
+	Form   interface{}
 }
 
 func newPageData(ctx *iris.Context) *PageData {
