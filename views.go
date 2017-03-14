@@ -11,11 +11,10 @@ import (
 )
 
 func signInView(ctx *iris.Context) {
-	if isSignedIn(ctx) {
-		ctx.Redirect(conf.AppUrl + APP_PATH)
-		return
-	}
 	pd := newPageData(ctx)
+	if isSignedIn(ctx) {
+		pd.User.redirectToDefaultWebsite(ctx)
+	}
 	pd.Form = SignInForm{}
 	ctx.Render("sign-in.html", pd, iris.RenderOptions{"layout": "layout2.html"})
 }
@@ -35,8 +34,8 @@ func signInPostView(ctx *iris.Context) {
 	if user.ID != 0 {
 		if user.Password == getMD5Hash(sif.Password) {
 			signIn(ctx, user)
-			ctx.Redirect(conf.AppUrl + APP_PATH)
-			return
+			pd := newPageData(ctx)
+			pd.User.redirectToDefaultWebsite(ctx)
 		} else {
 			err := errors.New("Email or password is wrong, please try again.")
 			pd.Errors = append(pd.Errors, &err)
@@ -57,11 +56,10 @@ func signOutView(ctx *iris.Context) {
 }
 
 func signUpView(ctx *iris.Context) {
-	if isSignedIn(ctx) {
-		ctx.Redirect(conf.AppUrl + APP_PATH)
-		return
-	}
 	pd := newPageData(ctx)
+	if isSignedIn(ctx) {
+		pd.User.redirectToDefaultWebsite(ctx)
+	}
 	pd.Form = SignUpForm{}
 	ctx.Render("sign-up.html", pd, iris.RenderOptions{"layout": "layout2.html"})
 }
@@ -82,8 +80,7 @@ func signUpPostView(ctx *iris.Context) {
 		if suf.Password1 == suf.Password2 {
 			user := &User{Email: suf.Email, Password: getMD5Hash(suf.Password1)}
 			db.Create(user)
-			ctx.Redirect(conf.AppUrl + APP_PATH)
-			return
+			pd.User.redirectToDefaultWebsite(ctx)
 		} else {
 			err := errors.New("Passwords don't match, please try again.")
 			pd.Errors = append(pd.Errors, &err)
@@ -97,11 +94,6 @@ func signUpPostView(ctx *iris.Context) {
 	pd.Form = &suf
 
 	ctx.Render("sign-up.html", pd, iris.RenderOptions{"layout": "layout2.html"})
-}
-
-func dashboardView(ctx *iris.Context) {
-	pd := newPageData(ctx)
-	ctx.Render("dashboard.html", pd)
 }
 
 func collectImgView(ctx *iris.Context) {
@@ -168,11 +160,42 @@ func editWebsiteView(ctx *iris.Context) {
 	db.First(w, wId)
 
 	wf := &WebsiteForm{
+		Id:   w.ID,
 		Name: w.Name,
 		Url:  w.Url,
 	}
 
 	pd.Form = wf
+	pd.WebsiteId = aesEncrypt(strconv.Itoa(int(w.ID)))
+	pd.TrackerUrl = strings.Replace(strings.Replace(conf.AppUrl, "https://", "//", -1), "http://", "//", -1) + "/public/tracker.js"
 
 	ctx.Render("websites-edit.html", pd)
+}
+
+func editWebsitePostView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	ctx.Render("website-edit.html", pd)
+}
+
+func websiteView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	ctx.Render("website.html", pd)
+}
+
+func websiteDeleteView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	wId, err := ctx.ParamInt64("id")
+	if err != nil {
+		log.Printf("[views.go] Error getting website id param: %s", err)
+	}
+	w := &Website{}
+	db.First(w, wId)
+	session := ctx.Session()
+	if w.OwnerID == pd.User.ID {
+		session.SetFlash("success", "Website successfully deleted.")
+		db.Delete(w)
+	} else {
+		session.SetFlash("error", "You're not the owner of this website.")
+	}
+	pd.User.redirectToDefaultWebsite(ctx)
 }

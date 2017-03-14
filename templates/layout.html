@@ -18,6 +18,8 @@
     <!-- AdminLTE Skins. Choose a skin from the css/skins
              folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="{{ .Conf.AppUrl }}/public/css/skins/_all-skins.min.css">
+    <!-- highlight js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/default.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -80,15 +82,18 @@
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu">
                     <li class="header">MAIN NAVIGATION</li>
-                    <li class="treeview">
-                        <a href="{{ .Conf.AppUrl }}/app">
+                    <li class="treeview" id="dashboard_link">
+                        <a href="javascript:;">
                             <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="{{ .Conf.AppUrl }}/app/websites-new"><i class="fa fa-plus"></i> New Website</a></li>
+{{ range $key, $website := .Websites }}
+                            <li><a href="{{ $.Conf.AppUrl }}/app/{{ $website.ID }}"><i class="fa fa-link"></i> {{ $website.Name }}</a></li>
+{{ end }}
+                            <li><a href="{{ .Conf.AppUrl }}/app/websites/new"><i class="fa fa-plus"></i> New Website</a></li>
                         </ul>
                     </li>
                     <li>
@@ -129,6 +134,8 @@
     <script src="{{ .Conf.AppUrl }}/public/plugins/fastclick/fastclick.js"></script>
     <!-- AdminLTE App -->
     <script src="{{ .Conf.AppUrl }}/public/js/app.min.js"></script>
+    <!-- highlight js -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{{ .Conf.AppUrl }}/public/js/demo.js"></script>
 

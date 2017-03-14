@@ -18,11 +18,16 @@ import (
 )
 
 type PageData struct {
-	User     *User
-	Conf     *Config
-	Errors   []*error
-	Form     interface{}
-	Gravatar string
+	User         *User
+	Websites     []*Website
+	Conf         *Config
+	Errors       []*error
+	Form         interface{}
+	Gravatar     string
+	WebsiteId    string
+	TrackerUrl   string
+	SuccessFlash interface{}
+	ErrorFlash   interface{}
 }
 
 func newPageData(ctx *iris.Context) *PageData {
@@ -41,7 +46,13 @@ func newPageData(ctx *iris.Context) *PageData {
 			placeholder = strings.Replace(placeholder, "/", "%2F", -1)
 			pd.Gravatar = fmt.Sprintf("https://secure.gravatar.com/avatar/%x?s=50&d=%s", md5.Sum([]byte(pd.User.Email)), placeholder)
 		}
+		var websites []*Website
+		db.Where("owner_id = ?", pd.User.ID).Find(&websites)
+		pd.Websites = websites
 	}
+	session := ctx.Session()
+	pd.SuccessFlash = session.GetFlash("success")
+	pd.ErrorFlash = session.GetFlash("error")
 	return pd
 }
 

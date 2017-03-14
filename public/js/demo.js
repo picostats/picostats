@@ -347,4 +347,13 @@ for (var i = 0; i < document.links.length; i++) {
     }
 }
 
+if (typeof __open_dashboard !== undefined && __open_dashboard) {
+    var dsh = document.getElementById('dashboard_link');
+    if (!dsh.className.includes('active')) {
+        dsh.className += ' active';
+    }
+}
+
+hljs.initHighlightingOnLoad();
+
 })(jQuery, $.AdminLTE);

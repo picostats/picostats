@@ -12,6 +12,7 @@ type SignUpForm struct {
 }
 
 type WebsiteForm struct {
+	Id   uint   `form:"id"`
 	Name string `form:"name"`
 	Url  string `form:"url"`
 }

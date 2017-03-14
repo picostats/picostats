@@ -31,19 +31,20 @@ func main() {
 	red = initRedis()
 
 	// GET view handlers
-	app.Get(APP_PATH, loginRequired, dashboardView)
 	app.Get(APP_PATH+"/sign-in", signInView)
 	app.Get(APP_PATH+"/sign-up", signUpView)
 	app.Get(APP_PATH+"/sign-out", signOutView)
-	app.Get(APP_PATH+"/account", accountView)
-	app.Get(APP_PATH+"/websites/:id", editWebsiteView)
-	app.Get(APP_PATH+"/websites-new", newWebsiteView)
+	app.Get(APP_PATH+"/account", loginRequired, accountView)
+	app.Get(APP_PATH+"/websites/new", loginRequired, newWebsiteView)
+	app.Get(APP_PATH+"/websites/{id}", loginRequired, editWebsiteView)
 	app.Get(APP_PATH+"/tracker.png", collectImgView)
+	app.Get(APP_PATH+"/{id}", loginRequired, websiteView)
+	app.Get(APP_PATH+"/websites/delete/{id}", loginRequired, websiteDeleteView)
 
 	// POST view handlers
 	app.Post(APP_PATH+"/sign-in", signInPostView)
 	app.Post(APP_PATH+"/sign-up", signUpPostView)
-	app.Post(APP_PATH+"/websites-new", newWebsitePostView)
+	app.Post(APP_PATH+"/websites/new", newWebsitePostView)
 
 	app.Listen(conf.ListenAddr)
 }
