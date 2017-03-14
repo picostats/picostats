@@ -40,6 +40,7 @@ func main() {
 	app.Get(APP_PATH+"/tracker.png", collectImgView)
 	app.Get(APP_PATH+"/{id}", loginRequired, websiteView)
 	app.Get(APP_PATH+"/websites/delete/{id}", loginRequired, websiteDeleteView)
+	app.Get(APP_PATH+"/websites/default/{id}", loginRequired, websiteMakeDefaultView)
 
 	// POST view handlers
 	app.Post(APP_PATH+"/sign-in", signInPostView)

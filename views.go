@@ -161,9 +161,10 @@ func editWebsiteView(ctx *iris.Context) {
 
 	if w.OwnerID == pd.User.ID {
 		wf := &WebsiteForm{
-			Id:   w.ID,
-			Name: w.Name,
-			Url:  w.Url,
+			Id:      w.ID,
+			Name:    w.Name,
+			Url:     w.Url,
+			Default: w.Default,
 		}
 		pd.Form = wf
 		pd.WebsiteId = aesEncrypt(strconv.Itoa(int(w.ID)))
@@ -204,7 +205,25 @@ func editWebsitePostView(ctx *iris.Context) {
 
 func websiteMakeDefaultView(ctx *iris.Context) {
 	pd := newPageData(ctx)
-	ctx.Render("website.html", pd)
+	wId, err := ctx.ParamInt64("id")
+	if err != nil {
+		log.Printf("[views.go] Error getting website id param: %s", err)
+	}
+	w := &Website{}
+	db.First(w, wId)
+	session := ctx.Session()
+	if w.OwnerID == pd.User.ID {
+		oldDefault := pd.User.getDefaultWebsite()
+		oldDefault.Default = false
+		db.Save(oldDefault)
+		w.Default = true
+		db.Save(w)
+		session.SetFlash("success", "You changed the default website.")
+		pd.User.redirectToDefaultWebsite(ctx)
+	} else {
+		session.SetFlash("error", "You are not the owner of this website.")
+		pd.User.redirectToDefaultWebsite(ctx)
+	}
 }
 
 func websiteView(ctx *iris.Context) {

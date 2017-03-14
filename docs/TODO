@@ -2,7 +2,6 @@ TODO
 
 v 1.0 beta
 
-- mvp app - websites management
 - stats - worker
 - mvp app - display data
 - cli options
@@ -47,3 +46,4 @@ v 1.0 beta
 * setup cloudflare
 * gravatar image
 * active link
+* mvp app - websites management

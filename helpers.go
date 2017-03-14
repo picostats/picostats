@@ -47,7 +47,7 @@ func newPageData(ctx *iris.Context) *PageData {
 			pd.Gravatar = fmt.Sprintf("https://secure.gravatar.com/avatar/%x?s=50&d=%s", md5.Sum([]byte(pd.User.Email)), placeholder)
 		}
 		var websites []*Website
-		db.Where("owner_id = ?", pd.User.ID).Find(&websites)
+		db.Order("id").Where("owner_id = ?", pd.User.ID).Find(&websites)
 		pd.Websites = websites
 	}
 	session := ctx.Session()

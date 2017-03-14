@@ -30,7 +30,9 @@
                             </div>
                             <div class="box-footer">
                                 <input type="submit" value="Update" class="btn btn-primary">&nbsp;&nbsp;
-                                <a href="#" class="btn btn-default">Make Default</a>
+{{ if not .Form.Default }}
+                                <a href="{{ .Conf.AppUrl }}/app/websites/default/{{ .Form.Id }}" class="btn btn-default">Make Default</a>
+{{ end }}
                                 <a href="javascript:;" class="btn btn-danger pull-right" data-toggle="modal" data-target="#deleteModal">Delete</a>
                             </div>
                         </form>
