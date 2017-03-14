@@ -14,7 +14,7 @@ type User struct {
 type Website struct {
 	gorm.Model
 	Owner   *User
-	OwnerID int    `sql:"index"`
+	OwnerID uint   `sql:"index"`
 	Name    string `sql:"size:255"`
 	Url     string `sql:"size:255"`
 }
@@ -36,9 +36,9 @@ type Page struct {
 type PageView struct {
 	gorm.Model
 	Website   *Website
-	WebsiteID int `sql:"index"`
+	WebsiteID uint `sql:"index"`
 	Visitor   *Visitor
-	VisitorID int `sql:"index"`
+	VisitorID uint `sql:"index"`
 	Page      *Page
-	PageID    int `sql:"index"`
+	PageID    uint `sql:"index"`
 }

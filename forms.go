@@ -10,3 +10,8 @@ type SignUpForm struct {
 	Password1 string `form:"password1"`
 	Password2 string `form:"password2"`
 }
+
+type WebsiteForm struct {
+	Name string `form:"name"`
+	Url  string `form:"url"`
+}

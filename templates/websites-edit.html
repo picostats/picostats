@@ -19,11 +19,11 @@
                             <div class="box-body">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Website Name</label>
-                                    <input type="text" class="form-control" placeholder="Enter Website Name" name="name" required>
+                                    <input type="text" class="form-control" placeholder="Enter Website Name" name="name" required value="{{ .Form.Name }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Website URL</label>
-                                    <input type="text" class="form-control" placeholder="Enter Website URL" name="url" required>
+                                    <input type="text" class="form-control" placeholder="Enter Website URL" name="url" required value="{{ .Form.Url }}">
                                 </div>
                             </div>
                             <div class="box-footer">

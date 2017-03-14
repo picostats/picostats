@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"strconv"
 	"strings"
 
 	"gopkg.in/kataras/iris.v6"
@@ -139,5 +140,39 @@ func newWebsiteView(ctx *iris.Context) {
 
 func newWebsitePostView(ctx *iris.Context) {
 	pd := newPageData(ctx)
-	ctx.Render("websites-new.html", pd)
+
+	wf := &WebsiteForm{}
+	err := ctx.ReadForm(wf)
+	if err != nil {
+		log.Println("[views.go] Error reading WebsiteForm: %s", err)
+	}
+
+	w := &Website{
+		OwnerID: pd.User.ID,
+		Name:    wf.Name,
+		Url:     wf.Url,
+	}
+
+	db.Create(w)
+
+	ctx.Redirect(conf.AppUrl + APP_PATH + "/websites/" + strconv.Itoa(int(w.ID)))
+}
+
+func editWebsiteView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	wId, err := ctx.ParamInt64("id")
+	if err != nil {
+		log.Printf("[views.go] Error getting website id param: %s", err)
+	}
+	w := &Website{}
+	db.First(w, wId)
+
+	wf := &WebsiteForm{
+		Name: w.Name,
+		Url:  w.Url,
+	}
+
+	pd.Form = wf
+
+	ctx.Render("websites-edit.html", pd)
 }
