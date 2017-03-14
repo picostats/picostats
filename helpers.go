@@ -2,8 +2,14 @@ package main
 
 import (
 	"bufio"
+	"crypto/aes"
+	"crypto/cipher"
 	"crypto/md5"
+	"crypto/rand"
+	"encoding/base64"
 	"encoding/hex"
+	"fmt"
+	"io"
 	"log"
 	"os"
 
@@ -59,4 +65,46 @@ type PageViewRequest struct {
 	Language   string `json:"language,omitempty"`
 	Resolution string `json:"resolution,omitempty"`
 	Referrer   string `json:"referrer,omitempty"`
+}
+
+func aesEncrypt(text string) string {
+	plaintext := []byte(text)
+
+	block, err := aes.NewCipher(conf.EncryptionKey)
+	if err != nil {
+		panic(err)
+	}
+
+	ciphertext := make([]byte, aes.BlockSize+len(plaintext))
+	iv := ciphertext[:aes.BlockSize]
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		panic(err)
+	}
+
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
+
+	return base64.URLEncoding.EncodeToString(ciphertext)
+}
+
+func aesDecrypt(cryptoText string) string {
+	ciphertext, _ := base64.URLEncoding.DecodeString(cryptoText)
+
+	block, err := aes.NewCipher(conf.EncryptionKey)
+	if err != nil {
+		panic(err)
+	}
+
+	if len(ciphertext) < aes.BlockSize {
+		log.Printf("[AesDecrypt] ciphertext too short")
+		return ""
+	}
+	iv := ciphertext[:aes.BlockSize]
+	ciphertext = ciphertext[aes.BlockSize:]
+
+	stream := cipher.NewCFBDecrypter(block, iv)
+
+	stream.XORKeyStream(ciphertext, ciphertext)
+
+	return fmt.Sprintf("%s", ciphertext)
 }

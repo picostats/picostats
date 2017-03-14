@@ -99,6 +99,9 @@ func signUpPostView(ctx *iris.Context) {
 
 func dashboardView(ctx *iris.Context) {
 	pd := newPageData(ctx)
+	enc := aesEncrypt("1")
+	log.Println(enc)
+	log.Println(aesDecrypt(enc))
 	ctx.Render("dashboard.html", pd)
 }
 

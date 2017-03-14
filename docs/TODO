@@ -3,6 +3,8 @@ TODO
 v 1.0 beta
 
 - stats - worker
+- mvp app - websites management
+- mvp app - display
 - mvp website
 - create a logo
 - cli options
@@ -14,6 +16,9 @@ v 1.1 beta
 - more data about the visitor
 - support for other databases
 - website monitoring
+- remember me
+- password recovery
+- goal conversions
 
 DONE
 

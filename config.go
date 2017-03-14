@@ -14,6 +14,7 @@ type Config struct {
 	LogSQL              bool   `json:"log_sql"`
 	Dev                 bool   `json:"dev"`
 	RegistrationEnabled bool   `json:"registration_enabled"`
+	EncryptionKey       []byte `json:"encryption_key"`
 }
 
 func (c *Config) load(configFile string) error {
