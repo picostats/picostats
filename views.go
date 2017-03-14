@@ -131,3 +131,13 @@ func accountView(ctx *iris.Context) {
 	pd := newPageData(ctx)
 	ctx.Render("account.html", pd)
 }
+
+func newWebsiteView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	ctx.Render("websites-new.html", pd)
+}
+
+func newWebsitePostView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	ctx.Render("websites-new.html", pd)
+}

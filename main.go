@@ -36,11 +36,13 @@ func main() {
 	app.Get(APP_PATH+"/sign-up", signUpView)
 	app.Get(APP_PATH+"/sign-out", signOutView)
 	app.Get(APP_PATH+"/account", accountView)
+	app.Get(APP_PATH+"/websites/new", newWebsiteView)
 	app.Get(APP_PATH+"/tracker.png", collectImgView)
 
 	// POST view handlers
 	app.Post(APP_PATH+"/sign-in", signInPostView)
 	app.Post(APP_PATH+"/sign-up", signUpPostView)
+	app.Post(APP_PATH+"/websites/new", newWebsiteView)
 
 	app.Listen(conf.ListenAddr)
 }
