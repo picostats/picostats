@@ -43,30 +43,29 @@ type Website struct {
 	Default bool   `sql:"not null"`
 }
 
-func (w *Website) getPageViews() []*PageView {
+func (w *Website) getPageViews(older, newer *time.Time) []*PageView {
 	var pvs []*PageView
-	weekAgo := time.Now().Truncate(time.Hour).Add(-time.Hour*time.Duration(time.Now().Hour())).AddDate(0, 0, -7)
-	db.Order("id").Where("website_id = ? AND created_at BETWEEN ? and ?", w.ID, weekAgo, time.Now()).Find(&pvs)
+	db.Order("id").Where("website_id = ? AND created_at BETWEEN ? and ?", w.ID, older, newer).Find(&pvs)
 	return pvs
 }
 
-func (w *Website) countPageViews() int {
-	pvs := w.getPageViews()
+func (w *Website) countPageViews(older, newer *time.Time) int {
+	pvs := w.getPageViews(older, newer)
 	return len(pvs)
 }
 
-func (w *Website) countUsers() int {
+func (w *Website) countUsers(older, newer *time.Time) int {
 	counter := map[uint]bool{}
-	pvs := w.getPageViews()
+	pvs := w.getPageViews(older, newer)
 	for _, pv := range pvs {
 		counter[pv.VisitorID] = true
 	}
 	return len(counter)
 }
 
-func (w *Website) countVisits() int {
+func (w *Website) countVisits(older, newer *time.Time) int {
 	count := 0
-	pvs := w.getPageViews()
+	pvs := w.getPageViews(older, newer)
 	for i, pv := range pvs {
 		if i < len(pvs)-1 {
 			d := getDuration(&pv.CreatedAt, &pvs[i+1].CreatedAt)
@@ -81,14 +80,50 @@ func (w *Website) countVisits() int {
 	return count
 }
 
-func (w *Website) countNew() int {
-	return w.countUsers()
+func (w *Website) countBouncedVisits(older, newer *time.Time) int {
+	count := 0
+	pvs := w.getPageViews(older, newer)
+	for i, pv := range pvs {
+		if i < len(pvs)-1 {
+			d := getDuration(&pv.CreatedAt, &pvs[i+1].CreatedAt)
+			if d.Minutes() >= 30 {
+				if i == 0 {
+					count++
+				} else {
+					d := getDuration(&pv.CreatedAt, &pvs[i-1].CreatedAt)
+					if d.Minutes() >= 30 {
+						count++
+					}
+				}
+			}
+		}
+
+	}
+	return count
 }
 
-func (w *Website) countReturning() int {
-	newCount := w.countNew()
-	visits := w.countVisits()
+func (w *Website) getBounceRate(older, newer *time.Time) float64 {
+	blounceRate := float64(w.countBouncedVisits(older, newer)) / float64(w.countVisits(older, newer)) * float64(100)
+	return blounceRate
+}
+
+func (w *Website) countNew(older, newer *time.Time) int {
+	return w.countUsers(older, newer)
+}
+
+func (w *Website) countReturning(older, newer *time.Time) int {
+	newCount := w.countNew(older, newer)
+	visits := w.countVisits(older, newer)
 	return visits - newCount
+}
+
+func (w *Website) getDataPoints(numDays int, newer *time.Time) []int {
+	var dataPoints []int
+	for ; numDays > 0; numDays-- {
+		dataPoints = append(dataPoints, w.countVisits(getTimeDaysAgo(numDays), getTimeDaysAgo(numDays-1)))
+	}
+	// log.Println(dataPoints)
+	return dataPoints
 }
 
 type Visitor struct {

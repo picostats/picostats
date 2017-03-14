@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	"gopkg.in/kataras/iris.v6"
 )
@@ -237,13 +239,18 @@ func websiteView(ctx *iris.Context) {
 
 	if w.OwnerID == pd.User.ID {
 		pd.Form = w
+		now := time.Now()
 		pd.Report = &Report{
-			PageViews: w.countPageViews(),
-			Users:     w.countUsers(),
-			Visits:    w.countVisits(),
-			New:       w.countNew(),
-			Returning: w.countReturning(),
+			PageViews:      w.countPageViews(getTimeDaysAgo(7), &now),
+			Users:          w.countUsers(getTimeDaysAgo(7), &now),
+			Visits:         w.countVisits(getTimeDaysAgo(7), &now),
+			New:            w.countNew(getTimeDaysAgo(7), &now),
+			Returning:      w.countReturning(getTimeDaysAgo(7), &now),
+			DataPoints:     w.getDataPoints(7, &now),
+			DataPointsPast: w.getDataPoints(14, getTimeDaysAgo(7)),
+			BounceRate:     fmt.Sprintf("%.2f", w.getBounceRate(getTimeDaysAgo(7), &now)),
 		}
+		log.Println(w.countBouncedVisits(getTimeDaysAgo(7), &now))
 		ctx.Render("website.html", pd)
 	} else {
 		session := ctx.Session()

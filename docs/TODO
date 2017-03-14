@@ -2,7 +2,7 @@ TODO
 
 v 1.0 beta
 
-- mvp app - display data
+- mvp app - display data (bounce rate, month, year, day, custom, times, trends, scale)
 - cli options
 - email verification
 - account - change password, delete account
@@ -11,6 +11,7 @@ v 1.0 beta
 
 v 1.1 beta
 
+- data display - other charts on main chart
 - javascript copy tracker code
 - verify tracker code button
 - sign in - next
@@ -25,6 +26,8 @@ v 1.1 beta
 - goal conversions
 - wordpress plugin
 - API
+- exclude me from tracking
+- exclude IPs from tracking
 
 DONE
 

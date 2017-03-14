@@ -44,12 +44,14 @@ type PageViewRequest struct {
 }
 
 type Report struct {
-	Visits     int
-	Users      int
-	PageViews  int
-	BounceRate string
-	New        int
-	Returning  int
+	Visits         int
+	Users          int
+	PageViews      int
+	BounceRate     string
+	New            int
+	Returning      int
+	DataPoints     []int
+	DataPointsPast []int
 }
 
 func newPageData(ctx *iris.Context) *PageData {
@@ -148,4 +150,10 @@ func getDuration(older, newer *time.Time) *time.Duration {
 	minutes := sinceOlder.Minutes() - sinceNewer.Minutes()
 	d := time.Duration(time.Minute * time.Duration(minutes))
 	return &d
+}
+
+func getTimeDaysAgo(numDays int) *time.Time {
+	numDays--
+	timeAgo := time.Now().Truncate(time.Hour).Add(-time.Hour*time.Duration(time.Now().Hour())).AddDate(0, 0, -numDays)
+	return &timeAgo
 }

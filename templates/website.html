@@ -64,7 +64,7 @@
 
                         <div class="info-box-content">
                             <span class="info-box-text">Bounce Rate</span>
-                            <span class="info-box-number">21.47%</span>
+                            <span class="info-box-number">{{ .Report.BounceRate }}%</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -178,7 +178,7 @@
           pointStrokeColor: "rgba(60,141,188,1)",
           pointHighlightFill: "#fff",
           pointHighlightStroke: "rgba(60,141,188,1)",
-          data: [28, 48, 40, 19, 86, 27, 90]
+          data: {{ .Report.DataPoints }}
         },
         {
           label: "Week Before",
@@ -188,7 +188,7 @@
           pointStrokeColor: "#c1c7d1",
           pointHighlightFill: "#fff",
           pointHighlightStroke: "rgba(220,220,220,1)",
-          data: [65, 59, 80, 81, 56, 55, 40]
+          data: {{ .Report.DataPointsPast }}
         }
       ]
     };
