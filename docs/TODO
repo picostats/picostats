@@ -2,7 +2,6 @@ TODO
 
 v 1.0 beta
 
-- stats - worker
 - mvp app - display data
 - cli options
 - email verification
@@ -12,6 +11,9 @@ v 1.0 beta
 
 v 1.1 beta
 
+- javascript copy tracker code
+- verify tracker code button
+- sign in - next
 - add tracking code to itself
 - redis password
 - drag and drop widgets
@@ -47,3 +49,4 @@ v 1.0 beta
 * gravatar image
 * active link
 * mvp app - websites management
+* stats - worker

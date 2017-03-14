@@ -30,6 +30,8 @@ func main() {
 	// Initializes Redis connection
 	red = initRedis()
 
+	initWorker()
+
 	// GET view handlers
 	app.Get(APP_PATH+"/sign-in", signInView)
 	app.Get(APP_PATH+"/sign-up", signUpView)
