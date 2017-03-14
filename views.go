@@ -135,3 +135,8 @@ func collectImgView(ctx *iris.Context) {
 	ctx.SetContentType("image/png")
 	ctx.Write(bytes)
 }
+
+func accountView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	ctx.Render("account.html", pd)
+}

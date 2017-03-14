@@ -35,6 +35,7 @@ func main() {
 	app.Get(APP_PATH+"/sign-in", signInView)
 	app.Get(APP_PATH+"/sign-up", signUpView)
 	app.Get(APP_PATH+"/sign-out", signOutView)
+	app.Get(APP_PATH+"/account", accountView)
 	app.Get(APP_PATH+"/tracker.png", collectImgView)
 
 	// POST view handlers

@@ -10,10 +10,10 @@ v 1.0 beta
 - cli options
 - email verification
 - account - change password
-- active link
 
 v 1.1 beta
 
+- redis password
 - drag and drop widgets
 - more data about the visitor
 - support for other databases
@@ -44,3 +44,4 @@ v 1.0 beta
 * stats - handling requests
 * setup cloudflare
 * gravatar image
+* active link
