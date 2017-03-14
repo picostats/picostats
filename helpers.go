@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"gopkg.in/kataras/iris.v6"
 )
@@ -47,6 +48,8 @@ type Report struct {
 	Users      int
 	PageViews  int
 	BounceRate string
+	New        int
+	Returning  int
 }
 
 func newPageData(ctx *iris.Context) *PageData {
@@ -137,4 +140,12 @@ func aesDecrypt(cryptoText string) string {
 	stream.XORKeyStream(ciphertext, ciphertext)
 
 	return fmt.Sprintf("%s", ciphertext)
+}
+
+func getDuration(older, newer *time.Time) *time.Duration {
+	sinceOlder := time.Since(*older)
+	sinceNewer := time.Since(*newer)
+	minutes := sinceOlder.Minutes() - sinceNewer.Minutes()
+	d := time.Duration(time.Minute * time.Duration(minutes))
+	return &d
 }

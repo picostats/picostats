@@ -43,33 +43,52 @@ type Website struct {
 	Default bool   `sql:"not null"`
 }
 
-func (w *Website) CountPageViews() int {
-	count := 0
+func (w *Website) getPageViews() []*PageView {
 	var pvs []*PageView
 	weekAgo := time.Now().Truncate(time.Hour).Add(-time.Hour*time.Duration(time.Now().Hour())).AddDate(0, 0, -7)
-	db.Where("website_id = ? AND created_at BETWEEN ? and ?", w.ID, weekAgo, time.Now()).Find(&pvs).Count(&count)
-	return count
+	db.Order("id").Where("website_id = ? AND created_at BETWEEN ? and ?", w.ID, weekAgo, time.Now()).Find(&pvs)
+	return pvs
 }
 
-func (w *Website) CountUsers() int {
-	// count := 0
+func (w *Website) countPageViews() int {
+	pvs := w.getPageViews()
+	return len(pvs)
+}
+
+func (w *Website) countUsers() int {
 	counter := map[uint]bool{}
-	countPvs := 0
-	var pvs []*PageView
-	weekAgo := time.Now().Truncate(time.Hour).Add(-time.Hour*time.Duration(time.Now().Hour())).AddDate(0, 0, -7)
-	db.Where("website_id = ? AND created_at BETWEEN ? and ?", w.ID, weekAgo, time.Now()).Find(&pvs).Count(&countPvs)
+	pvs := w.getPageViews()
 	for _, pv := range pvs {
 		counter[pv.VisitorID] = true
 	}
 	return len(counter)
 }
 
-func (w *Website) CountVisits() int {
+func (w *Website) countVisits() int {
 	count := 0
-	// var pvs []*Visitor
-	// weekAgo := time.Now().Truncate(time.Hour).Add(-time.Hour*time.Duration(time.Now().Hour())).AddDate(0, 0, -7)
-	// db.Where("website_id = ? AND created_at BETWEEN ? and ?", w.ID, weekAgo, time.Now()).Find(&pvs).Count(&count)
+	pvs := w.getPageViews()
+	for i, pv := range pvs {
+		if i < len(pvs)-1 {
+			d := getDuration(&pv.CreatedAt, &pvs[i+1].CreatedAt)
+			if d.Minutes() >= 30 {
+				count++
+			}
+		}
+		if i == len(pvs)-1 {
+			count++
+		}
+	}
 	return count
+}
+
+func (w *Website) countNew() int {
+	return w.countUsers()
+}
+
+func (w *Website) countReturning() int {
+	newCount := w.countNew()
+	visits := w.countVisits()
+	return visits - newCount
 }
 
 type Visitor struct {
