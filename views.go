@@ -99,29 +99,18 @@ func signUpPostView(ctx *iris.Context) {
 
 func dashboardView(ctx *iris.Context) {
 	pd := newPageData(ctx)
-	// enc := aesEncrypt("1")
-	// log.Println(enc)
-	// log.Println(aesDecrypt(enc))
 	ctx.Render("dashboard.html", pd)
 }
 
 func collectImgView(ctx *iris.Context) {
-	website := ctx.URLParam("w")
-	path := ctx.URLParam("p")
-	hostname := ctx.URLParam("h")
-	title := ctx.URLParam("t")
-	language := ctx.URLParam("l")
-	resolution := ctx.URLParam("s")
-	referrer := ctx.URLParam("r")
-
 	pv := &PageViewRequest{
-		WebsiteID:  website,
-		Path:       path,
-		Hostname:   hostname,
-		Title:      title,
-		Language:   language,
-		Resolution: resolution,
-		Referrer:   referrer,
+		WebsiteID:  ctx.URLParam("w"),
+		Path:       ctx.URLParam("p"),
+		Hostname:   ctx.URLParam("h"),
+		Title:      ctx.URLParam("t"),
+		Language:   ctx.URLParam("l"),
+		Resolution: ctx.URLParam("s"),
+		Referrer:   ctx.URLParam("r"),
 	}
 
 	pvJson, err := json.Marshal(pv)

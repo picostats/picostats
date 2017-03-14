@@ -4,15 +4,16 @@ v 1.0 beta
 
 - stats - worker
 - mvp app - websites management
-- mvp app - display
-- mvp website
-- create a logo
+- mvp app - display data
 - cli options
 - email verification
 - account - change password
+- mvp website
+- create a logo
 
 v 1.1 beta
 
+- add tracking code to itself
 - redis password
 - drag and drop widgets
 - more data about the visitor
@@ -22,6 +23,7 @@ v 1.1 beta
 - password recovery
 - goal conversions
 - wordpress plugin
+- API
 
 DONE
 
