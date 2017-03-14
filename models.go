@@ -1,7 +1,9 @@
 package main
 
 import (
+	// "log"
 	"strconv"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"gopkg.in/kataras/iris.v6"
@@ -39,6 +41,35 @@ type Website struct {
 	Name    string `sql:"size:255"`
 	Url     string `sql:"size:255"`
 	Default bool   `sql:"not null"`
+}
+
+func (w *Website) CountPageViews() int {
+	count := 0
+	var pvs []*PageView
+	weekAgo := time.Now().Truncate(time.Hour).Add(-time.Hour*time.Duration(time.Now().Hour())).AddDate(0, 0, -7)
+	db.Where("website_id = ? AND created_at BETWEEN ? and ?", w.ID, weekAgo, time.Now()).Find(&pvs).Count(&count)
+	return count
+}
+
+func (w *Website) CountUsers() int {
+	// count := 0
+	counter := map[uint]bool{}
+	countPvs := 0
+	var pvs []*PageView
+	weekAgo := time.Now().Truncate(time.Hour).Add(-time.Hour*time.Duration(time.Now().Hour())).AddDate(0, 0, -7)
+	db.Where("website_id = ? AND created_at BETWEEN ? and ?", w.ID, weekAgo, time.Now()).Find(&pvs).Count(&countPvs)
+	for _, pv := range pvs {
+		counter[pv.VisitorID] = true
+	}
+	return len(counter)
+}
+
+func (w *Website) CountVisits() int {
+	count := 0
+	// var pvs []*Visitor
+	// weekAgo := time.Now().Truncate(time.Hour).Add(-time.Hour*time.Duration(time.Now().Hour())).AddDate(0, 0, -7)
+	// db.Where("website_id = ? AND created_at BETWEEN ? and ?", w.ID, weekAgo, time.Now()).Find(&pvs).Count(&count)
+	return count
 }
 
 type Visitor struct {

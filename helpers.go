@@ -28,6 +28,25 @@ type PageData struct {
 	TrackerUrl   string
 	SuccessFlash interface{}
 	ErrorFlash   interface{}
+	Report       *Report
+}
+
+type PageViewRequest struct {
+	WebsiteID  string `json:"website_id"`
+	Title      string `json:"title,omitempty"`
+	Path       string `json:"path,omitempty"`
+	Hostname   string `json:"hostname,omitempty"`
+	Language   string `json:"language,omitempty"`
+	Resolution string `json:"resolution,omitempty"`
+	Referrer   string `json:"referrer,omitempty"`
+	IpAddress  string `json:"ip_address,omitempty"`
+}
+
+type Report struct {
+	Visits     int
+	Users      int
+	PageViews  int
+	BounceRate string
 }
 
 func newPageData(ctx *iris.Context) *PageData {
@@ -76,17 +95,6 @@ func getTrackerImageBytes() []byte {
 	buffer := bufio.NewReader(infile)
 	_, err = buffer.Read(bytes)
 	return bytes
-}
-
-type PageViewRequest struct {
-	WebsiteID  string `json:"website_id"`
-	Title      string `json:"title,omitempty"`
-	Path       string `json:"path,omitempty"`
-	Hostname   string `json:"hostname,omitempty"`
-	Language   string `json:"language,omitempty"`
-	Resolution string `json:"resolution,omitempty"`
-	Referrer   string `json:"referrer,omitempty"`
-	IpAddress  string `json:"ip_address,omitempty"`
 }
 
 func aesEncrypt(text string) string {

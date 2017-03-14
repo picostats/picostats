@@ -236,6 +236,12 @@ func websiteView(ctx *iris.Context) {
 	db.First(w, wId)
 
 	if w.OwnerID == pd.User.ID {
+		pd.Form = w
+		pd.Report = &Report{
+			PageViews: w.CountPageViews(),
+			Users:     w.CountUsers(),
+			Visits:    w.CountVisits(),
+		}
 		ctx.Render("website.html", pd)
 	} else {
 		session := ctx.Session()

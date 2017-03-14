@@ -3,8 +3,8 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                Blank page
-                <small>it all starts here</small>
+                {{ .Form.Name }}
+                <small>{{ .Form.Url }}</small>
             </h1>
         </section>
 
@@ -13,12 +13,73 @@
 
             {{ render "partials/flash.html"}}
 
+            <!-- Info boxes -->
+            <div class="row">
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-aqua"><i class="ion ion-power"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Visits</span>
+                            <span class="info-box-number">{{ .Report.Visits }}</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-red"><i class="ion ion-ios-people-outline"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Users</span>
+                            <span class="info-box-number">{{ .Report.Users }}</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <!-- fix for small devices only -->
+                <div class="clearfix visible-sm-block"></div>
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-green"><i class="ion ion-link"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Pageviews</span>
+                            <span class="info-box-number">{{ .Report.PageViews }}</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-yellow"><i class="ion ion-paper-airplane"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Bounce Rate</span>
+                            <span class="info-box-number">21.47%</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+
             <div class="row">
                 <div class="col-md-12">
                     <!-- LINE CHART -->
                     <div class="box box-default">
                         <div class="box-header with-border">
-                            <h3 class="box-title">Line Chart</h3>
+                            <h3 class="box-title">Visits</h3>
                         </div>
                         <div class="box-body">
                             <div class="chart">
@@ -28,7 +89,34 @@
                         <!-- /.box-body -->
                     </div>
                     <!-- /.box -->
+                </div>
+            </div>
 
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="box box-default">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">New vs Returning</h3>
+                        </div>
+                        <div class="box-body">
+                            <canvas id="pieChart" style="height:450px"></canvas>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+
+                <div class="col-md-6">
+                    <div class="box box-default">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Time</h3>
+                        </div>
+                        <div class="box-body">
+                            fsdfsadf
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
                 </div>
             </div>
 
@@ -80,20 +168,10 @@
     };
 
     var areaChartData = {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      labels: ["Mar 14", "Mar 13", "Mar 12", "Mar 11", "Mar 10", "Mar 9", "Mar 8"],
       datasets: [
         {
-          label: "Electronics",
-          fillColor: "rgba(210, 214, 222, 1)",
-          strokeColor: "rgba(210, 214, 222, 1)",
-          pointColor: "rgba(210, 214, 222, 1)",
-          pointStrokeColor: "#c1c7d1",
-          pointHighlightFill: "#fff",
-          pointHighlightStroke: "rgba(220,220,220,1)",
-          data: [65, 59, 80, 81, 56, 55, 40]
-        },
-        {
-          label: "Digital Goods",
+          label: "This Week",
           fillColor: "rgba(60,141,188,0.9)",
           strokeColor: "rgba(60,141,188,0.8)",
           pointColor: "#3b8bba",
@@ -101,6 +179,16 @@
           pointHighlightFill: "#fff",
           pointHighlightStroke: "rgba(60,141,188,1)",
           data: [28, 48, 40, 19, 86, 27, 90]
+        },
+        {
+          label: "Week Before",
+          fillColor: "rgba(210, 214, 222, 1)",
+          strokeColor: "rgba(210, 214, 222, 1)",
+          pointColor: "rgba(210, 214, 222, 1)",
+          pointStrokeColor: "#c1c7d1",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(220,220,220,1)",
+          data: [65, 59, 80, 81, 56, 55, 40]
         }
       ]
     };
