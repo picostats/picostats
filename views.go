@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 
@@ -99,4 +100,35 @@ func signUpPostView(ctx *iris.Context) {
 func dashboardView(ctx *iris.Context) {
 	pd := newPageData(ctx)
 	ctx.Render("dashboard.html", pd)
+}
+
+func collectImgView(ctx *iris.Context) {
+	website := ctx.URLParam("w")
+	path := ctx.URLParam("p")
+	hostname := ctx.URLParam("h")
+	title := ctx.URLParam("t")
+	language := ctx.URLParam("l")
+	resolution := ctx.URLParam("s")
+	referrer := ctx.URLParam("r")
+
+	pv := &PageViewRequest{
+		WebsiteID:  website,
+		Path:       path,
+		Hostname:   hostname,
+		Title:      title,
+		Language:   language,
+		Resolution: resolution,
+		Referrer:   referrer,
+	}
+
+	pvJson, err := json.Marshal(pv)
+	if err != nil {
+		log.Printf("[views.go] Error in tracking image: %s", err)
+	}
+
+	red.LPush("pvs", string(pvJson))
+
+	bytes := getTrackerImageBytes()
+	ctx.SetContentType("image/png")
+	ctx.Write(bytes)
 }

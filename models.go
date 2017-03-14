@@ -16,3 +16,9 @@ type Website struct {
 	Owner   *User
 	OwnerID int `sql:"index"`
 }
+
+type PageView struct {
+	gorm.Model
+	Website   *Website
+	WebsiteID int `sql:"index"`
+}

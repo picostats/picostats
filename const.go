@@ -6,4 +6,6 @@ const (
 	SESSION_COOKIE = "picostatssid"
 
 	USER_ID = "userid"
+
+	TRACKER_IMAGE = "public/tracker.png"
 )
