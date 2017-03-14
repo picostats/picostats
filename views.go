@@ -228,7 +228,20 @@ func websiteMakeDefaultView(ctx *iris.Context) {
 
 func websiteView(ctx *iris.Context) {
 	pd := newPageData(ctx)
-	ctx.Render("website.html", pd)
+	wId, err := ctx.ParamInt64("id")
+	if err != nil {
+		log.Printf("[views.go] Error getting website id param: %s", err)
+	}
+	w := &Website{}
+	db.First(w, wId)
+
+	if w.OwnerID == pd.User.ID {
+		ctx.Render("website.html", pd)
+	} else {
+		session := ctx.Session()
+		session.SetFlash("error", "You are not the owner of this website.")
+		pd.User.redirectToDefaultWebsite(ctx)
+	}
 }
 
 func websiteDeleteView(ctx *iris.Context) {

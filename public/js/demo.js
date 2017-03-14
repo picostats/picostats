@@ -347,11 +347,19 @@ for (var i = 0; i < document.links.length; i++) {
     }
 }
 
-if (typeof __open_dashboard !== undefined && __open_dashboard) {
+if (typeof __open_dashboard !== undefined) {
     var dsh = document.getElementById('dashboard_link');
     if (!dsh.className.includes('active')) {
         dsh.className += ' active';
     }
+}
+
+if (typeof __draw_linechart !== undefined) {
+    var lineChartCanvas = $("#lineChart").get(0).getContext("2d");
+    var lineChart = new Chart(lineChartCanvas);
+    var lineChartOptions = areaChartOptions;
+    lineChartOptions.datasetFill = false;
+    lineChart.Line(areaChartData, lineChartOptions);
 }
 
 hljs.initHighlightingOnLoad();
