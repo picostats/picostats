@@ -9,6 +9,8 @@ v 1.0 beta
 - create a logo
 - cli options
 - email verification
+- account - change password
+- active link
 
 v 1.1 beta
 
@@ -19,6 +21,7 @@ v 1.1 beta
 - remember me
 - password recovery
 - goal conversions
+- wordpress plugin
 
 DONE
 
@@ -39,3 +42,5 @@ v 1.0 beta
 * init dashboard
 * stats - javascript
 * stats - handling requests
+* setup cloudflare
+* gravatar image

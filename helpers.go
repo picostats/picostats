@@ -12,15 +12,17 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"gopkg.in/kataras/iris.v6"
 )
 
 type PageData struct {
-	User   *User
-	Conf   *Config
-	Errors []*error
-	Form   interface{}
+	User     *User
+	Conf     *Config
+	Errors   []*error
+	Form     interface{}
+	Gravatar string
 }
 
 func newPageData(ctx *iris.Context) *PageData {
@@ -31,6 +33,14 @@ func newPageData(ctx *iris.Context) *PageData {
 		userId := session.Get(USER_ID)
 		pd.User = &User{}
 		db.First(pd.User, userId.(uint))
+		if conf.Dev {
+			pd.Gravatar = conf.AppUrl + "/public/img/user.png"
+		} else {
+			placeholder := conf.AppUrl + "/public/img/user.png"
+			placeholder = strings.Replace(placeholder, ":", "%3A", -1)
+			placeholder = strings.Replace(placeholder, "/", "%2F", -1)
+			pd.Gravatar = fmt.Sprintf("https://secure.gravatar.com/avatar/%x?s=50&d=%s", md5.Sum([]byte(pd.User.Email)), placeholder)
+		}
 	}
 	return pd
 }
