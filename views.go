@@ -159,22 +159,52 @@ func editWebsiteView(ctx *iris.Context) {
 	w := &Website{}
 	db.First(w, wId)
 
-	wf := &WebsiteForm{
-		Id:   w.ID,
-		Name: w.Name,
-		Url:  w.Url,
+	if w.OwnerID == pd.User.ID {
+		wf := &WebsiteForm{
+			Id:   w.ID,
+			Name: w.Name,
+			Url:  w.Url,
+		}
+		pd.Form = wf
+		pd.WebsiteId = aesEncrypt(strconv.Itoa(int(w.ID)))
+		pd.TrackerUrl = strings.Replace(strings.Replace(conf.AppUrl, "https://", "//", -1), "http://", "//", -1) + "/public/tracker.js"
+		ctx.Render("websites-edit.html", pd)
+	} else {
+		session := ctx.Session()
+		session.SetFlash("error", "You are not the owner of this website.")
+		pd.User.redirectToDefaultWebsite(ctx)
 	}
-
-	pd.Form = wf
-	pd.WebsiteId = aesEncrypt(strconv.Itoa(int(w.ID)))
-	pd.TrackerUrl = strings.Replace(strings.Replace(conf.AppUrl, "https://", "//", -1), "http://", "//", -1) + "/public/tracker.js"
-
-	ctx.Render("websites-edit.html", pd)
 }
 
 func editWebsitePostView(ctx *iris.Context) {
 	pd := newPageData(ctx)
-	ctx.Render("website-edit.html", pd)
+	wId, err := ctx.ParamInt64("id")
+	if err != nil {
+		log.Printf("[views.go] Error getting website id param: %s", err)
+	}
+	w := &Website{}
+	db.First(w, wId)
+	session := ctx.Session()
+	if w.OwnerID == pd.User.ID {
+		wf := &WebsiteForm{}
+		err = ctx.ReadForm(wf)
+		if err != nil {
+			log.Println("[views.go] Error reading WebsiteForm: %s", err)
+		}
+		w.Name = wf.Name
+		w.Url = wf.Url
+		db.Save(w)
+		session.SetFlash("success", "Website successfully updated.")
+		ctx.Redirect(conf.AppUrl + APP_PATH + "/websites/" + strconv.Itoa(int(w.ID)))
+	} else {
+		session.SetFlash("error", "You are not the owner of this website.")
+		pd.User.redirectToDefaultWebsite(ctx)
+	}
+}
+
+func websiteMakeDefaultView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	ctx.Render("website.html", pd)
 }
 
 func websiteView(ctx *iris.Context) {
@@ -195,7 +225,7 @@ func websiteDeleteView(ctx *iris.Context) {
 		session.SetFlash("success", "Website successfully deleted.")
 		db.Delete(w)
 	} else {
-		session.SetFlash("error", "You're not the owner of this website.")
+		session.SetFlash("error", "You are not the owner of this website.")
 	}
 	pd.User.redirectToDefaultWebsite(ctx)
 }
