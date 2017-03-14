@@ -75,6 +75,7 @@ type PageViewRequest struct {
 	Language   string `json:"language,omitempty"`
 	Resolution string `json:"resolution,omitempty"`
 	Referrer   string `json:"referrer,omitempty"`
+	IpAddress  string `json:"ip_address,omitempty"`
 }
 
 func aesEncrypt(text string) string {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"strings"
 
 	"gopkg.in/kataras/iris.v6"
 )
@@ -111,6 +112,7 @@ func collectImgView(ctx *iris.Context) {
 		Language:   ctx.URLParam("l"),
 		Resolution: ctx.URLParam("s"),
 		Referrer:   ctx.URLParam("r"),
+		IpAddress:  strings.Split(ctx.Request.RemoteAddr, ":")[0],
 	}
 
 	pvJson, err := json.Marshal(pv)
