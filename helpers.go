@@ -49,14 +49,19 @@ type PageViewRequest struct {
 }
 
 type Report struct {
-	Visits         int
-	Users          int
-	PageViews      int
-	BounceRate     string
-	New            int
-	Returning      int
-	DataPoints     []int
-	DataPointsPast []int
+	Visits              int
+	Users               int
+	PageViews           int
+	BounceRate          string
+	New                 int
+	Returning           int
+	DataPoints          []int
+	DataPointsPast      []int
+	TimePerVisit        string
+	TimeTotal           string
+	PageViewsPerVisit   string
+	NewPercentage       string
+	ReturningPercentage string
 }
 
 func newPageData(ctx *iris.Context) *PageData {

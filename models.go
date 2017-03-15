@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "log"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -62,9 +62,9 @@ func (w *Website) getVisitPageViews(older, newer *time.Time) []*PageView {
 func (w *Website) getGroupedPageViews(older, newer *time.Time) [][]*PageView {
 	var gpvs [][]*PageView
 	pvs := w.getPageViews(older, newer)
+	push := true
 	for i, pv := range pvs {
 		first := false
-		push := true
 		if i == 0 {
 			pvBefore := &PageView{}
 			db.Order("id desc").Where("id < ?", pv.ID).First(pvBefore)
@@ -87,11 +87,9 @@ func (w *Website) getGroupedPageViews(older, newer *time.Time) [][]*PageView {
 		}
 
 		if first {
-			newGroup := []*PageView{}
+			newGroup := []*PageView{pv}
 			gpvs = append(gpvs, newGroup)
-		}
-
-		if push {
+		} else if push {
 			gpvs[len(gpvs)-1] = append(gpvs[len(gpvs)-1], pv)
 		}
 	}
@@ -165,6 +163,55 @@ func (w *Website) getDataPointsHourly(numDays int) []int {
 		dataPoints = append(dataPoints, w.countVisits(&older, &newer))
 	}
 	return dataPoints
+}
+
+func (w *Website) getTimePerVisit(older, newer *time.Time) string {
+	seconds := 0
+
+	gpvs := w.getGroupedPageViews(older, newer)
+	for _, gpv := range gpvs {
+		if len(gpv) > 1 {
+			sinceOlder := time.Since(gpv[0].CreatedAt)
+			sinceNewer := time.Since(gpv[len(gpv)-1].CreatedAt)
+			seconds += int(sinceOlder.Seconds() - sinceNewer.Seconds())
+		}
+	}
+
+	var d time.Duration
+
+	if len(gpvs) > 0 {
+		d = time.Duration(time.Second * time.Duration(seconds/len(gpvs)))
+	} else {
+		d = time.Duration(0)
+	}
+
+	return fmt.Sprintf("%02d:%02d:%02d", int(d.Hours()), int(d.Minutes())%60, int(d.Seconds())%60)
+}
+
+func (w *Website) getTimeAllVisits(older, newer *time.Time) string {
+	seconds := 0
+
+	gpvs := w.getGroupedPageViews(older, newer)
+	for _, gpv := range gpvs {
+		if len(gpv) > 1 {
+			sinceOlder := time.Since(gpv[0].CreatedAt)
+			sinceNewer := time.Since(gpv[len(gpv)-1].CreatedAt)
+			seconds += int(sinceOlder.Seconds() - sinceNewer.Seconds())
+		}
+	}
+
+	d := time.Duration(time.Second * time.Duration(seconds))
+
+	return fmt.Sprintf("%02d:%02d:%02d", int(d.Hours()), int(d.Minutes())%60, int(d.Seconds())%60)
+}
+
+func (w *Website) getPageViewsPerVisit(older, newer *time.Time) string {
+	count := 0
+	gpvs := w.getGroupedPageViews(older, newer)
+	for _, gpv := range gpvs {
+		count += len(gpv)
+	}
+	return fmt.Sprintf("%.2f", float64(count)/float64(len(gpvs)))
 }
 
 type Visitor struct {
