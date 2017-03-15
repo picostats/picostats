@@ -27,7 +27,7 @@ func signInPostView(ctx *iris.Context) {
 	sif := &SignInForm{}
 	err := ctx.ReadForm(sif)
 	if err != nil {
-		log.Println("[views.go] Error reading SignInForm: %s", err)
+		log.Printf("[views.go] Error reading SignInForm: %s", err)
 	}
 
 	user := &User{}
@@ -72,7 +72,7 @@ func signUpPostView(ctx *iris.Context) {
 	suf := &SignUpForm{}
 	err := ctx.ReadForm(suf)
 	if err != nil {
-		log.Println("[views.go] Error reading SignUpForm: %s", err)
+		log.Printf("[views.go] Error reading SignUpForm: %s", err)
 	}
 
 	user := &User{}
@@ -138,7 +138,7 @@ func newWebsitePostView(ctx *iris.Context) {
 	wf := &WebsiteForm{}
 	err := ctx.ReadForm(wf)
 	if err != nil {
-		log.Println("[views.go] Error reading WebsiteForm: %s", err)
+		log.Printf("[views.go] Error reading WebsiteForm: %s", err)
 	}
 
 	w := &Website{
@@ -195,7 +195,7 @@ func editWebsitePostView(ctx *iris.Context) {
 		wf := &WebsiteForm{}
 		err = ctx.ReadForm(wf)
 		if err != nil {
-			log.Println("[views.go] Error reading WebsiteForm: %s", err)
+			log.Printf("[views.go] Error reading WebsiteForm: %s", err)
 		}
 		w.Name = wf.Name
 		w.Url = wf.Url
@@ -258,13 +258,13 @@ func websiteView(ctx *iris.Context) {
 
 		startInt, err := strconv.ParseInt(startStr, 10, 64)
 		if err != nil {
-			log.Println("[views.go] Error parsing timestamp: %s", err)
+			log.Printf("[views.go] Error parsing timestamp: %s", err)
 		}
 		start := time.Unix(startInt, 0)
 
 		endInt, err := strconv.ParseInt(endStr, 10, 64)
 		if err != nil {
-			log.Println("[views.go] Error parsing timestamp: %s", err)
+			log.Printf("[views.go] Error parsing timestamp: %s", err)
 		}
 		end := time.Unix(endInt, 0)
 
@@ -278,8 +278,19 @@ func websiteView(ctx *iris.Context) {
 		pd.DateRangeType = getDateRangeType(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
 		pd.ChartScale = getChartScale(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
 
-		dataPointsLen := pd.DataRangeStartSubtract + 1
-		dataPointsLenPast := dataPointsLen * 2
+		var dataPoints []int
+		var dataPointsPast []int
+
+		if (pd.DataRangeStartSubtract == 0 && pd.DataRangeEndSubract == 0) || (pd.DataRangeStartSubtract == 1 && pd.DataRangeEndSubract == 1) {
+			dataPoints = w.getDataPointsHourly(pd.DataRangeStartSubtract)
+			dataPointsPast = w.getDataPointsHourly(pd.DataRangeStartSubtract + 1)
+		} else {
+			dataPoints = w.getDataPoints(pd.DataRangeStartSubtract+1, pd.DataRangeStartSubtract+1)
+			dataPointsPast = w.getDataPoints((pd.DataRangeStartSubtract+1)*2, pd.DataRangeStartSubtract+1)
+		}
+
+		log.Println(w.countBouncedVisits(&start, &end))
+		// log.Println(w.getGroupedPageViews(&start, &end))
 
 		pd.Report = &Report{
 			PageViews:      w.countPageViews(&start, &end),
@@ -287,8 +298,8 @@ func websiteView(ctx *iris.Context) {
 			Visits:         w.countVisits(&start, &end),
 			New:            w.countNew(&start, &end),
 			Returning:      w.countReturning(&start, &end),
-			DataPoints:     w.getDataPoints(dataPointsLen, dataPointsLen),
-			DataPointsPast: w.getDataPoints(dataPointsLenPast, dataPointsLen),
+			DataPoints:     dataPoints,
+			DataPointsPast: dataPointsPast,
 			BounceRate:     fmt.Sprintf("%.2f", w.getBounceRate(&start, &end)),
 		}
 		ctx.Render("website.html", pd)
@@ -305,13 +316,12 @@ func changeDateRangeView(ctx *iris.Context) {
 	drf := &DateRangeForm{}
 	err := ctx.ReadForm(drf)
 	if err != nil {
-		log.Println("[views.go] Error reading DateRangeForm: %s", err)
+		log.Printf("[views.go] Error reading DateRangeForm: %s", err)
 	}
 
 	session := ctx.Session()
 	session.Set("date-range-start", drf.Start)
 	session.Set("date-range-end", drf.End)
-	session.Set("date-range-offset", drf.Offset)
 
 	ctx.Redirect(conf.AppUrl + APP_PATH + "/" + wId)
 }

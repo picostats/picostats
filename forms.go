@@ -19,7 +19,6 @@ type WebsiteForm struct {
 }
 
 type DateRangeForm struct {
-	Start  string `form:"start"`
-	End    string `form:"end"`
-	Offset string `form:"offset"`
+	Start string `form:"start"`
+	End   string `form:"end"`
 }

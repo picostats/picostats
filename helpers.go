@@ -180,7 +180,7 @@ func getDateRangeType(startSubtract, endSubract int) string {
 func getChartScale(startSubtract, endSubract int) []string {
 	chartScale := []string{"Mar 14", "Mar 13", "Mar 12", "Mar 11", "Mar 10", "Mar 9", "Mar 8"}
 	if (startSubtract == 0 && endSubract == 0) || (startSubtract == 1 && endSubract == 1) {
-		chartScale = []string{"Mar 14", "Mar 13", "Mar 12", "Mar 11", "Mar 10", "Mar 9", "Mar 8"}
+		chartScale = []string{"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"}
 	} else if startSubtract == 6 && endSubract == 0 {
 		chartScale = []string{}
 		for i := -6; i <= 0; i++ {

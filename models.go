@@ -50,6 +50,54 @@ func (w *Website) getPageViews(older, newer *time.Time) []*PageView {
 	return pvs
 }
 
+func (w *Website) getVisitPageViews(older, newer *time.Time) []*PageView {
+	var vpvs []*PageView
+	gpvs := w.getGroupedPageViews(older, newer)
+	for _, pv := range gpvs {
+		vpvs = append(vpvs, pv[0])
+	}
+	return vpvs
+}
+
+func (w *Website) getGroupedPageViews(older, newer *time.Time) [][]*PageView {
+	var gpvs [][]*PageView
+	pvs := w.getPageViews(older, newer)
+	for i, pv := range pvs {
+		first := false
+		push := true
+		if i == 0 {
+			pvBefore := &PageView{}
+			db.Order("id desc").Where("id < ?", pv.ID).First(pvBefore)
+			if pvBefore.ID == 0 {
+				first = true
+			} else {
+				d := getDuration(&pvBefore.CreatedAt, &pv.CreatedAt)
+				if d.Minutes() >= 30 {
+					first = true
+				} else {
+					push = false
+				}
+			}
+		} else {
+			d := getDuration(&pvs[i-1].CreatedAt, &pv.CreatedAt)
+			if d.Minutes() >= 30 {
+				// vpvs = append(vpvs, pv)
+				first = true
+			}
+		}
+
+		if first {
+			newGroup := []*PageView{}
+			gpvs = append(gpvs, newGroup)
+		}
+
+		if push {
+			gpvs[len(gpvs)-1] = append(gpvs[len(gpvs)-1], pv)
+		}
+	}
+	return gpvs
+}
+
 func (w *Website) countPageViews(older, newer *time.Time) int {
 	pvs := w.getPageViews(older, newer)
 	return len(pvs)
@@ -65,40 +113,17 @@ func (w *Website) countUsers(older, newer *time.Time) int {
 }
 
 func (w *Website) countVisits(older, newer *time.Time) int {
-	count := 0
-	pvs := w.getPageViews(older, newer)
-	for i, pv := range pvs {
-		if i < len(pvs)-1 {
-			d := getDuration(&pv.CreatedAt, &pvs[i+1].CreatedAt)
-			if d.Minutes() >= 30 {
-				count++
-			}
-		}
-		if i == len(pvs)-1 {
-			count++
-		}
-	}
-	return count
+	vpvs := w.getVisitPageViews(older, newer)
+	return len(vpvs)
 }
 
 func (w *Website) countBouncedVisits(older, newer *time.Time) int {
 	count := 0
-	pvs := w.getPageViews(older, newer)
-	for i, pv := range pvs {
-		if i < len(pvs)-1 {
-			d := getDuration(&pv.CreatedAt, &pvs[i+1].CreatedAt)
-			if d.Minutes() >= 30 {
-				if i == 0 {
-					count++
-				} else {
-					d := getDuration(&pv.CreatedAt, &pvs[i-1].CreatedAt)
-					if d.Minutes() >= 30 {
-						count++
-					}
-				}
-			}
+	gpvs := w.getGroupedPageViews(older, newer)
+	for _, gpv := range gpvs {
+		if len(gpv) == 1 {
+			count++
 		}
-
 	}
 	return count
 }
@@ -128,7 +153,17 @@ func (w *Website) getDataPoints(numDays, limit int) []int {
 		dataPoints = append(dataPoints, w.countVisits(getTimeDaysAgo(numDays), getTimeDaysAgo(numDays-1)))
 		numDays--
 	}
-	// log.Println(dataPoints)
+	return dataPoints
+}
+
+func (w *Website) getDataPointsHourly(numDays int) []int {
+	var dataPoints []int
+	start := getTimeDaysAgo(numDays + 1)
+	for i := 0; i < 24; i++ {
+		older := start.Add(time.Duration(i) * time.Hour)
+		newer := start.Add(time.Duration(i+1) * time.Hour).Add(-time.Second)
+		dataPoints = append(dataPoints, w.countVisits(&older, &newer))
+	}
 	return dataPoints
 }
 
