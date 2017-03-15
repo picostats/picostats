@@ -239,11 +239,19 @@ func websiteView(ctx *iris.Context) {
 
 	if w.OwnerID == pd.User.ID {
 		pd.Form = w
-		// now := time.Now()
 
 		session := ctx.Session()
 		startStr := session.GetString("date-range-start")
 		endStr := session.GetString("date-range-end")
+
+		if len(startStr) == 0 {
+			t := getTimeDaysAgo(7)
+			startStr = strconv.Itoa(int(t.Unix()))
+		}
+		if len(endStr) == 0 {
+			t := getTimeDaysAgo(0)
+			endStr = strconv.Itoa(int(t.Unix()))
+		}
 
 		startInt, err := strconv.ParseInt(startStr, 10, 64)
 		if err != nil {

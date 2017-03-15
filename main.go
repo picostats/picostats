@@ -30,6 +30,7 @@ func main() {
 	// Initializes Redis connection
 	red = initRedis()
 
+	// Initializes worker and starts saving data
 	initWorker()
 
 	// GET view handlers
@@ -38,11 +39,11 @@ func main() {
 	app.Get(APP_PATH+"/sign-out", signOutView)
 	app.Get(APP_PATH+"/account", loginRequired, accountView)
 	app.Get(APP_PATH+"/websites/new", loginRequired, newWebsiteView)
+	app.Get(APP_PATH+"/websites/delete/{id}", loginRequired, websiteDeleteView)
+	app.Get(APP_PATH+"/websites/default/{id}", loginRequired, websiteMakeDefaultView)
 	app.Get(APP_PATH+"/websites/{id}", loginRequired, editWebsiteView)
 	app.Get(APP_PATH+"/tracker.png", collectImgView)
 	app.Get(APP_PATH+"/{id}", loginRequired, websiteView)
-	app.Get(APP_PATH+"/websites/delete/{id}", loginRequired, websiteDeleteView)
-	app.Get(APP_PATH+"/websites/default/{id}", loginRequired, websiteMakeDefaultView)
 
 	// POST view handlers
 	app.Post(APP_PATH+"/sign-in", signInPostView)

@@ -4,7 +4,7 @@
         <section class="content-header">
             <h1>
                 {{ .Form.Name }}
-                <small>{{ .Form.Url }}</small>
+                <small><a href="http://{{ .Form.Url }}" target="_blank">{{ .Form.Url }}</a></small>
             </h1>
         </section>
 
@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box">
-                        <span class="info-box-icon bg-aqua"><i class="ion ion-refresh"></i></span>
+                        <span class="info-box-icon bg-aqua"><i class="fa fa-hand-pointer-o"></i></span>
 
                         <div class="info-box-content">
                             <span class="info-box-text">Visits</span>
