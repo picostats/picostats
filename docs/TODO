@@ -2,7 +2,7 @@ TODO
 
 v 1.0 beta
 
-- mvp app - display data (bounce rate, month, year, day, custom, times, trends, scale)
+- display data - times panel, scale
 - cli options
 - email verification
 - account - change password, delete account
@@ -11,6 +11,14 @@ v 1.0 beta
 
 v 1.1 beta
 
+- fix tabindexes
+- limits for saas
+- payment and activation
+- change default range
+- timezones issue
+- display data - trends (percentage)
+- world map
+- enable demo
 - data display - other charts on main chart
 - javascript copy tracker code
 - verify tracker code button
@@ -53,3 +61,5 @@ v 1.0 beta
 * active link
 * mvp app - websites management
 * stats - worker
+* display data - bounce rate
+* display data - date range

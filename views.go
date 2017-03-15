@@ -240,23 +240,65 @@ func websiteView(ctx *iris.Context) {
 	if w.OwnerID == pd.User.ID {
 		pd.Form = w
 		now := time.Now()
+
+		session := ctx.Session()
+		startStr := session.GetString("date-range-start")
+		endStr := session.GetString("date-range-end")
+
+		startInt, err := strconv.ParseInt(startStr, 10, 64)
+		if err != nil {
+			log.Println("[views.go] Error parsing timestamp: %s", err)
+		}
+		start := time.Unix(startInt, 0)
+
+		endInt, err := strconv.ParseInt(endStr, 10, 64)
+		if err != nil {
+			log.Println("[views.go] Error parsing timestamp: %s", err)
+		}
+		end := time.Unix(endInt, 0)
+
+		pd.DataRangeStartSubtract = int(time.Since(start).Hours() / 24)
+		if time.Since(end).Hours() > 0 {
+			pd.DataRangeEndSubract = int(time.Since(end).Hours()/24) + 1
+		} else {
+			pd.DataRangeEndSubract = 0
+		}
+
+		pd.DateRangeType = getDateRangeType(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
+
 		pd.Report = &Report{
-			PageViews:      w.countPageViews(getTimeDaysAgo(7), &now),
-			Users:          w.countUsers(getTimeDaysAgo(7), &now),
-			Visits:         w.countVisits(getTimeDaysAgo(7), &now),
-			New:            w.countNew(getTimeDaysAgo(7), &now),
-			Returning:      w.countReturning(getTimeDaysAgo(7), &now),
+			PageViews:      w.countPageViews(&start, &end),
+			Users:          w.countUsers(&start, &end),
+			Visits:         w.countVisits(&start, &end),
+			New:            w.countNew(&start, &end),
+			Returning:      w.countReturning(&start, &end),
 			DataPoints:     w.getDataPoints(7, &now),
 			DataPointsPast: w.getDataPoints(14, getTimeDaysAgo(7)),
-			BounceRate:     fmt.Sprintf("%.2f", w.getBounceRate(getTimeDaysAgo(7), &now)),
+			BounceRate:     fmt.Sprintf("%.2f", w.getBounceRate(&start, &end)),
 		}
-		log.Println(w.countBouncedVisits(getTimeDaysAgo(7), &now))
 		ctx.Render("website.html", pd)
 	} else {
 		session := ctx.Session()
 		session.SetFlash("error", "You are not the owner of this website.")
 		pd.User.redirectToDefaultWebsite(ctx)
 	}
+}
+
+func changeDateRangeView(ctx *iris.Context) {
+	wId := ctx.Param("id")
+
+	drf := &DateRangeForm{}
+	err := ctx.ReadForm(drf)
+	if err != nil {
+		log.Println("[views.go] Error reading DateRangeForm: %s", err)
+	}
+
+	session := ctx.Session()
+	session.Set("date-range-start", drf.Start)
+	session.Set("date-range-end", drf.End)
+	session.Set("date-range-offset", drf.Offset)
+
+	ctx.Redirect(conf.AppUrl + APP_PATH + "/" + wId)
 }
 
 func websiteDeleteView(ctx *iris.Context) {

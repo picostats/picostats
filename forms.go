@@ -17,3 +17,9 @@ type WebsiteForm struct {
 	Url     string `form:"url"`
 	Default bool   `form:"default"`
 }
+
+type DateRangeForm struct {
+	Start  string `form:"start"`
+	End    string `form:"end"`
+	Offset string `form:"offset"`
+}

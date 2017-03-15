@@ -49,6 +49,7 @@ func main() {
 	app.Post(APP_PATH+"/sign-up", signUpPostView)
 	app.Post(APP_PATH+"/websites/new", newWebsitePostView)
 	app.Post(APP_PATH+"/websites/{id}", loginRequired, editWebsitePostView)
+	app.Post(APP_PATH+"/{id}", loginRequired, changeDateRangeView)
 
 	app.Listen(conf.ListenAddr)
 }

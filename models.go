@@ -103,8 +103,12 @@ func (w *Website) countBouncedVisits(older, newer *time.Time) int {
 }
 
 func (w *Website) getBounceRate(older, newer *time.Time) float64 {
-	blounceRate := float64(w.countBouncedVisits(older, newer)) / float64(w.countVisits(older, newer)) * float64(100)
-	return blounceRate
+	visits := w.countVisits(older, newer)
+	if visits > 0 {
+		blounceRate := float64(w.countBouncedVisits(older, newer)) / float64(visits) * float64(100)
+		return blounceRate
+	}
+	return 0
 }
 
 func (w *Website) countNew(older, newer *time.Time) int {

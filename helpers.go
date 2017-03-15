@@ -19,17 +19,20 @@ import (
 )
 
 type PageData struct {
-	User         *User
-	Websites     []*Website
-	Conf         *Config
-	Errors       []*error
-	Form         interface{}
-	Gravatar     string
-	WebsiteId    string
-	TrackerUrl   string
-	SuccessFlash interface{}
-	ErrorFlash   interface{}
-	Report       *Report
+	User                   *User
+	Websites               []*Website
+	Conf                   *Config
+	Errors                 []*error
+	Form                   interface{}
+	Gravatar               string
+	WebsiteId              string
+	TrackerUrl             string
+	SuccessFlash           interface{}
+	ErrorFlash             interface{}
+	Report                 *Report
+	DataRangeStartSubtract int
+	DataRangeEndSubract    int
+	DateRangeType          string
 }
 
 type PageViewRequest struct {
@@ -156,4 +159,18 @@ func getTimeDaysAgo(numDays int) *time.Time {
 	numDays--
 	timeAgo := time.Now().Truncate(time.Hour).Add(-time.Hour*time.Duration(time.Now().Hour())).AddDate(0, 0, -numDays)
 	return &timeAgo
+}
+
+func getDateRangeType(startSubtract, endSubract int) string {
+	dateRangeType := "Date Range"
+	if startSubtract == 0 && endSubract == 0 {
+		dateRangeType = "Today"
+	} else if startSubtract == 1 && endSubract == 1 {
+		dateRangeType = "Yesterday"
+	} else if startSubtract == 6 && endSubract == 0 {
+		dateRangeType = "Last 7 Days"
+	} else if startSubtract == 29 && endSubract == 0 {
+		dateRangeType = "Last 30 Days"
+	}
+	return dateRangeType
 }

@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box">
-                        <span class="info-box-icon bg-aqua"><i class="ion ion-power"></i></span>
+                        <span class="info-box-icon bg-aqua"><i class="ion ion-refresh"></i></span>
 
                         <div class="info-box-content">
                             <span class="info-box-text">Visits</span>
@@ -80,6 +80,12 @@
                     <div class="box box-default">
                         <div class="box-header with-border">
                             <h3 class="box-title">Visits</h3>
+                            <button type="button" class="btn btn-default pull-right" id="daterange-btn">
+                                <span>
+                                    <i class="fa fa-calendar"></i> {{ .DateRangeType }}
+                                </span>
+                                <i class="fa fa-caret-down"></i>
+                            </button>
                         </div>
                         <div class="box-body">
                             <div class="chart">
@@ -109,7 +115,7 @@
                 <div class="col-md-6">
                     <div class="box box-default">
                         <div class="box-header with-border">
-                            <h3 class="box-title">Time</h3>
+                            <h3 class="box-title">Times</h3>
                         </div>
                         <div class="box-body">
                             fsdfsadf
@@ -146,9 +152,9 @@
       //Number - Tension of the bezier curve between points
       bezierCurveTension: 0.3,
       //Boolean - Whether to show a dot for each point
-      pointDot: false,
+      pointDot: true,
       //Number - Radius of each point dot in pixels
-      pointDotRadius: 4,
+      pointDotRadius: 3,
       //Number - Pixel width of point dot stroke
       pointDotStrokeWidth: 1,
       //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
@@ -232,4 +238,14 @@
       legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
     };
 
+    var dataRangeStartSubtract = {{ .DataRangeStartSubtract }};
+    var dataRangeEndSubtract = {{ .DataRangeEndSubract }};
+
     </script>
+
+
+<form style="display: none;" action="" method="post" id="dateRangeForm">
+    <input type="hidden" name="start" value="" id="start">
+    <input type="hidden" name="end" value="" id="end">
+    <input type="hidden" name="offset" value="" id="offset">
+</form>
