@@ -2,18 +2,16 @@ TODO
 
 v 1.0 beta
 
-- display data - scale and filtering
 - display data - times panel
 - cli options
 - email verification
 - account - change password, delete account
 - mvp website
 - create a logo
-- display data - content, browsers, countries
 
 v 1.1 beta
 
-- check numbers, something is wrong?
+- display data - content, browsers, countries
 - fix app path confusion
 - check indexes
 - real time stats
@@ -72,3 +70,5 @@ v 1.0 beta
 * link to website - enable click
 * generate website id only once
 * button for website settings
+* check numbers, something is wrong?
+* display data - scale and filtering

@@ -173,12 +173,16 @@ func getDateRangeType(startSubtract, endSubract int) string {
 		dateRangeType = "Last 7 Days"
 	} else if startSubtract == 29 && endSubract == 0 {
 		dateRangeType = "Last 30 Days"
+	} else if endSubract == 0 {
+		dateRangeType = "This Month"
+	} else {
+		dateRangeType = "Last Month"
 	}
 	return dateRangeType
 }
 
 func getChartScale(startSubtract, endSubract int) []string {
-	chartScale := []string{"Mar 14", "Mar 13", "Mar 12", "Mar 11", "Mar 10", "Mar 9", "Mar 8"}
+	chartScale := []string{}
 	if (startSubtract == 0 && endSubract == 0) || (startSubtract == 1 && endSubract == 1) {
 		chartScale = []string{"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"}
 	} else if startSubtract == 6 && endSubract == 0 {
@@ -192,6 +196,19 @@ func getChartScale(startSubtract, endSubract int) []string {
 		for i := -29; i <= 0; i++ {
 			item := time.Now().AddDate(0, 0, i).Month().String()[0:3] + " " + strconv.Itoa(time.Now().AddDate(0, 0, i).Day())
 			chartScale = append(chartScale, item)
+		}
+	} else if endSubract == 0 {
+		timeCounter := time.Now().AddDate(0, 0, -time.Now().Day()+1)
+		for timeCounter.Month() == time.Now().Month() {
+			chartScale = append(chartScale, timeCounter.Month().String()[0:3]+" "+strconv.Itoa(timeCounter.Day()))
+			timeCounter = timeCounter.AddDate(0, 0, 1)
+		}
+	} else {
+		timeCounterMonth := time.Now().AddDate(0, -1, 0)
+		timeCounter := timeCounterMonth.AddDate(0, 0, -timeCounterMonth.Day()+1)
+		for timeCounter.Month() == timeCounterMonth.Month() {
+			chartScale = append(chartScale, timeCounter.Month().String()[0:3]+" "+strconv.Itoa(timeCounter.Day()))
+			timeCounter = timeCounter.AddDate(0, 0, 1)
 		}
 	}
 	return chartScale

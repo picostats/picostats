@@ -289,9 +289,6 @@ func websiteView(ctx *iris.Context) {
 			dataPointsPast = w.getDataPoints((pd.DataRangeStartSubtract+1)*2, pd.DataRangeStartSubtract+1)
 		}
 
-		log.Println(w.countBouncedVisits(&start, &end))
-		// log.Println(w.getGroupedPageViews(&start, &end))
-
 		pd.Report = &Report{
 			PageViews:      w.countPageViews(&start, &end),
 			Users:          w.countUsers(&start, &end),
