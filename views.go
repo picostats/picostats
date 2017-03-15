@@ -149,6 +149,9 @@ func newWebsitePostView(ctx *iris.Context) {
 
 	db.Create(w)
 
+	w.TrackingCode = aesEncrypt(strconv.Itoa(int(w.ID)))
+	db.Save(w)
+
 	ctx.Redirect(conf.AppUrl + APP_PATH + "/websites/" + strconv.Itoa(int(w.ID)))
 }
 
@@ -169,7 +172,7 @@ func editWebsiteView(ctx *iris.Context) {
 			Default: w.Default,
 		}
 		pd.Form = wf
-		pd.WebsiteId = aesEncrypt(strconv.Itoa(int(w.ID)))
+		pd.WebsiteId = w.TrackingCode
 		pd.TrackerUrl = strings.Replace(strings.Replace(conf.AppUrl, "https://", "//", -1), "http://", "//", -1) + "/public/tracker.js"
 		ctx.Render("websites-edit.html", pd)
 	} else {

@@ -36,11 +36,12 @@ func (u *User) redirectToDefaultWebsite(ctx *iris.Context) {
 
 type Website struct {
 	gorm.Model
-	Owner   *User
-	OwnerID uint   `sql:"index"`
-	Name    string `sql:"size:255"`
-	Url     string `sql:"size:255"`
-	Default bool   `sql:"not null"`
+	Owner        *User
+	OwnerID      uint   `sql:"index"`
+	Name         string `sql:"size:255"`
+	Url          string `sql:"size:255"`
+	Default      bool   `sql:"not null"`
+	TrackingCode string `sql:"size:255"`
 }
 
 func (w *Website) getPageViews(older, newer *time.Time) []*PageView {
