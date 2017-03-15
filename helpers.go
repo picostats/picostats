@@ -12,6 +12,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -33,6 +34,7 @@ type PageData struct {
 	DataRangeStartSubtract int
 	DataRangeEndSubract    int
 	DateRangeType          string
+	ChartScale             []string
 }
 
 type PageViewRequest struct {
@@ -173,4 +175,24 @@ func getDateRangeType(startSubtract, endSubract int) string {
 		dateRangeType = "Last 30 Days"
 	}
 	return dateRangeType
+}
+
+func getChartScale(startSubtract, endSubract int) []string {
+	chartScale := []string{"Mar 14", "Mar 13", "Mar 12", "Mar 11", "Mar 10", "Mar 9", "Mar 8"}
+	if (startSubtract == 0 && endSubract == 0) || (startSubtract == 1 && endSubract == 1) {
+		chartScale = []string{"Mar 14", "Mar 13", "Mar 12", "Mar 11", "Mar 10", "Mar 9", "Mar 8"}
+	} else if startSubtract == 6 && endSubract == 0 {
+		chartScale = []string{}
+		for i := -6; i <= 0; i++ {
+			item := time.Now().AddDate(0, 0, i).Month().String()[0:3] + " " + strconv.Itoa(time.Now().AddDate(0, 0, i).Day())
+			chartScale = append(chartScale, item)
+		}
+	} else if startSubtract == 29 && endSubract == 0 {
+		chartScale = []string{}
+		for i := -29; i <= 0; i++ {
+			item := time.Now().AddDate(0, 0, i).Month().String()[0:3] + " " + strconv.Itoa(time.Now().AddDate(0, 0, i).Day())
+			chartScale = append(chartScale, item)
+		}
+	}
+	return chartScale
 }

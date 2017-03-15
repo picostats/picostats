@@ -239,7 +239,7 @@ func websiteView(ctx *iris.Context) {
 
 	if w.OwnerID == pd.User.ID {
 		pd.Form = w
-		now := time.Now()
+		// now := time.Now()
 
 		session := ctx.Session()
 		startStr := session.GetString("date-range-start")
@@ -265,6 +265,10 @@ func websiteView(ctx *iris.Context) {
 		}
 
 		pd.DateRangeType = getDateRangeType(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
+		pd.ChartScale = getChartScale(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
+
+		dataPointsLen := pd.DataRangeStartSubtract + 1
+		dataPointsLenPast := dataPointsLen * 2
 
 		pd.Report = &Report{
 			PageViews:      w.countPageViews(&start, &end),
@@ -272,8 +276,8 @@ func websiteView(ctx *iris.Context) {
 			Visits:         w.countVisits(&start, &end),
 			New:            w.countNew(&start, &end),
 			Returning:      w.countReturning(&start, &end),
-			DataPoints:     w.getDataPoints(7, &now),
-			DataPointsPast: w.getDataPoints(14, getTimeDaysAgo(7)),
+			DataPoints:     w.getDataPoints(dataPointsLen, dataPointsLen),
+			DataPointsPast: w.getDataPoints(dataPointsLenPast, dataPointsLen),
 			BounceRate:     fmt.Sprintf("%.2f", w.getBounceRate(&start, &end)),
 		}
 		ctx.Render("website.html", pd)

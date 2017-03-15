@@ -121,10 +121,11 @@ func (w *Website) countReturning(older, newer *time.Time) int {
 	return visits - newCount
 }
 
-func (w *Website) getDataPoints(numDays int, newer *time.Time) []int {
+func (w *Website) getDataPoints(numDays, limit int) []int {
 	var dataPoints []int
-	for ; numDays > 0; numDays-- {
+	for ; limit > 0; limit-- {
 		dataPoints = append(dataPoints, w.countVisits(getTimeDaysAgo(numDays), getTimeDaysAgo(numDays-1)))
+		numDays--
 	}
 	// log.Println(dataPoints)
 	return dataPoints
