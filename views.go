@@ -82,7 +82,9 @@ func signUpPostView(ctx *iris.Context) {
 		if suf.Password1 == suf.Password2 {
 			user := &User{Email: suf.Email, Password: getMD5Hash(suf.Password1)}
 			db.Create(user)
-			pd.User.redirectToDefaultWebsite(ctx)
+			verificationLink := conf.AppUrl + APP_PATH + "/verify/" + aesEncrypt(strconv.Itoa(int(user.ID)))
+			sendVerificationEmail(user.Email, verificationLink)
+			ctx.Redirect(conf.AppUrl + APP_PATH + "/verify")
 		} else {
 			err := errors.New("Passwords don't match, please try again.")
 			pd.Errors = append(pd.Errors, &err)
@@ -392,4 +394,29 @@ func accountDeleteView(ctx *iris.Context) {
 	pd := newPageData(ctx)
 	db.Delete(pd.User)
 	ctx.Redirect(conf.AppUrl + APP_PATH + "/sign-out")
+}
+
+func verifyMessageView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	if isSignedIn(ctx) {
+		pd.User.redirectToDefaultWebsite(ctx)
+	}
+	ctx.Render("verify.html", pd, iris.RenderOptions{"layout": "layout2.html"})
+}
+
+func verifyView(ctx *iris.Context) {
+	userIdStr := ctx.Param("hash")
+	userId, err := strconv.Atoi(aesDecrypt(userIdStr))
+	if err != nil {
+		log.Printf("[views.go] Atoi err: %s", err)
+	} else {
+		u := &User{}
+		db.First(u, userId)
+		u.Verified = true
+		db.Save(u)
+		signIn(ctx, u)
+		session := ctx.Session()
+		session.SetFlash("success", "You have successfully verified your email address and activated your PicoStats account.")
+		u.redirectToDefaultWebsite(ctx)
+	}
 }

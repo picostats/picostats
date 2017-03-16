@@ -53,6 +53,8 @@ func main() {
 	app.Get(APP_PATH+"/websites/delete/{id}", loginRequired, websiteDeleteView)
 	app.Get(APP_PATH+"/websites/default/{id}", loginRequired, websiteMakeDefaultView)
 	app.Get(APP_PATH+"/websites/{id}", loginRequired, editWebsiteView)
+	app.Get(APP_PATH+"/verify", verifyMessageView)
+	app.Get(APP_PATH+"/verify/{hash}", verifyView)
 	app.Get(APP_PATH+"/tracker.png", collectImgView)
 	app.Get(APP_PATH+"/{id}", loginRequired, websiteView)
 
@@ -63,8 +65,6 @@ func main() {
 	app.Post(APP_PATH+"/websites/{id}", loginRequired, editWebsitePostView)
 	app.Post(APP_PATH+"/account", loginRequired, changePasswordPost)
 	app.Post(APP_PATH+"/{id}", loginRequired, changeDateRangeView)
-
-	SendVerificationEmail("piha.tihomir@gmail.com", "https://www.picostats.com")
 
 	app.Listen(conf.ListenAddr)
 }

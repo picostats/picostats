@@ -29,7 +29,9 @@ func isSignedIn(ctx *iris.Context) bool {
 		return false
 	}
 	if userId.(uint) > 0 {
-		return true
+		u := &User{}
+		db.First(u, userId.(uint))
+		return u.ID > 0 && u.Verified
 	}
 	return false
 }

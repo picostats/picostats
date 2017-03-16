@@ -36,28 +36,28 @@ func initEmails() {
 
 	em.Semaphore = semaphore.New(32)
 
-	em.StartSending()
+	em.startSending()
 }
 
-func (e *EmailManager) Queue(ed *EmailData) {
+func (e *EmailManager) queue(ed *EmailData) {
 	e.EmailDataObjects = append(e.EmailDataObjects, ed)
 }
 
-func (e *EmailManager) StartSending() {
+func (e *EmailManager) startSending() {
 	go func() {
 		for {
 			for len(e.EmailDataObjects) > 0 {
 				e.Semaphore.Acquire()
 				var ed *EmailData
 				ed, e.EmailDataObjects = e.EmailDataObjects[0], e.EmailDataObjects[1:]
-				go e.Send(ed)
+				go e.send(ed)
 			}
 			time.Sleep(time.Second * 3)
 		}
 	}()
 }
 
-func (e *EmailManager) Send(ed *EmailData) error {
+func (e *EmailManager) send(ed *EmailData) error {
 	content := gosparkpost.Content{
 		HTML:    ed.EmailMessage.HTML,
 		From:    fmt.Sprintf("%s <%s>", ed.EmailMessage.FromName, ed.EmailMessage.FromEmail),
@@ -101,7 +101,7 @@ type EmailData struct {
 	EmailMessage     *EmailMessage
 }
 
-func ParseHTML(ed *EmailData) string {
+func parseHTML(ed *EmailData) string {
 	buffer := new(bytes.Buffer)
 
 	t, err := template.New("welcome.html").ParseFiles("templates/emails/welcome.html")
@@ -117,7 +117,7 @@ func ParseHTML(ed *EmailData) string {
 	return buffer.String()
 }
 
-func ParseText(ed *EmailData) string {
+func parseText(ed *EmailData) string {
 	buffer := new(bytes.Buffer)
 
 	t, err := ttemplate.New("welcome.txt").ParseFiles("templates/emails/welcome.txt")
@@ -133,16 +133,16 @@ func ParseText(ed *EmailData) string {
 	return buffer.String()
 }
 
-func SendVerificationEmail(email, link string) {
+func sendVerificationEmail(email, link string) {
 	ed := &EmailData{}
 	ed.VerificationLink = link
 	ed.EmailMessage = &EmailMessage{
 		Subject: "Welcome to PicoStats",
 		To:      email, FromName: "PicoStats",
 		FromEmail: DEFAULT_EMAIL_SENDER,
-		HTML:      ParseHTML(ed),
-		Text:      ParseText(ed),
+		HTML:      parseHTML(ed),
+		Text:      parseText(ed),
 	}
 
-	em.Queue(ed)
+	em.queue(ed)
 }
