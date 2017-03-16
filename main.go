@@ -43,6 +43,7 @@ func main() {
 	app.Get(APP_PATH+"/sign-up", signUpView)
 	app.Get(APP_PATH+"/sign-out", signOutView)
 	app.Get(APP_PATH+"/account", loginRequired, accountView)
+	app.Get(APP_PATH+"/account/delete", loginRequired, accountDeleteView)
 	app.Get(APP_PATH+"/websites/new", loginRequired, newWebsiteView)
 	app.Get(APP_PATH+"/websites/delete/{id}", loginRequired, websiteDeleteView)
 	app.Get(APP_PATH+"/websites/default/{id}", loginRequired, websiteMakeDefaultView)
@@ -55,6 +56,7 @@ func main() {
 	app.Post(APP_PATH+"/sign-up", signUpPostView)
 	app.Post(APP_PATH+"/websites/new", newWebsitePostView)
 	app.Post(APP_PATH+"/websites/{id}", loginRequired, editWebsitePostView)
+	app.Post(APP_PATH+"/account", loginRequired, changePasswordPost)
 	app.Post(APP_PATH+"/{id}", loginRequired, changeDateRangeView)
 
 	app.Listen(conf.ListenAddr)

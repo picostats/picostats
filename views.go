@@ -358,3 +358,38 @@ func websiteDeleteView(ctx *iris.Context) {
 	}
 	pd.User.redirectToDefaultWebsite(ctx)
 }
+
+func changePasswordPost(ctx *iris.Context) {
+	pd := newPageData(ctx)
+
+	pf := &PasswordForm{}
+	err := ctx.ReadForm(pf)
+	if err != nil {
+		log.Printf("[views.go] Error reading PasswordForm: %s", err)
+	}
+
+	if pf.Password1 == pf.Password2 {
+		if pd.User.Password == getMD5Hash(pf.CurrentPassword) {
+			pd.User.Password = getMD5Hash(pf.Password1)
+			db.Save(pd.User)
+			session := ctx.Session()
+			session.SetFlash("success", "You have successfully changed your PicoStats password.")
+			ctx.Redirect(conf.AppUrl + APP_PATH + "/account")
+			return
+		} else {
+			err := errors.New("Your current password is not right, please try again.")
+			pd.Errors = append(pd.Errors, &err)
+		}
+	} else {
+		err := errors.New("Passwords are not matching, please try again.")
+		pd.Errors = append(pd.Errors, &err)
+	}
+
+	ctx.Render("account.html", pd)
+}
+
+func accountDeleteView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+	db.Delete(pd.User)
+	ctx.Redirect(conf.AppUrl + APP_PATH + "/sign-out")
+}

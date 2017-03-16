@@ -2,13 +2,14 @@ TODO
 
 v 1.0 beta
 
-- account - change password, delete account
 - email verification
 - mvp website
 - create a logo
 
 v 1.1 beta
 
+- keep dashboard menu open at all times
+- change the way tracking code gets generated (we don't need aes anymore)
 - display data - content, browsers, countries
 - fix app path confusion
 - check indexes
@@ -73,3 +74,4 @@ v 1.0 beta
 * display data - times panel
 * refactor display logic
 * cli options
+* account - change password, delete account

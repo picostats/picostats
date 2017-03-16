@@ -22,3 +22,9 @@ type DateRangeForm struct {
 	Start string `form:"start"`
 	End   string `form:"end"`
 }
+
+type PasswordForm struct {
+	Password1       string `form:"password1"`
+	Password2       string `form:"password2"`
+	CurrentPassword string `form:"password"`
+}
