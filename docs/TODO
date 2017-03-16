@@ -2,31 +2,32 @@ TODO
 
 v 1.0 beta
 
+- add logo to application
 - email verification
 - mvp website
-- create a logo
 
 v 1.1 beta
 
 - keep dashboard menu open at all times
 - change the way tracking code gets generated (we don't need aes anymore)
 - display data - content, browsers, countries
+- fix tabindexes & focus
+- limits for saas
+- payment and activation
+- enable demo
+- sign in - next
+- add tracking code to itself
+
 - fix app path confusion
 - check indexes
 - real time stats
-- fix tabindexes
-- limits for saas
-- payment and activation
 - change default range
 - timezones issue
 - display data - trends (percentage)
 - world map
-- enable demo
-- data display - other charts on main chart
+- data display - other charts on main chart (visitors, pageviews, ...)
 - javascript copy tracker code
 - verify tracker code button
-- sign in - next
-- add tracking code to itself
 - redis password
 - drag and drop widgets
 - more data about the visitor
@@ -75,3 +76,5 @@ v 1.0 beta
 * refactor display logic
 * cli options
 * account - change password, delete account
+* create a logo
+* add favicon to application

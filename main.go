@@ -59,5 +59,7 @@ func main() {
 	app.Post(APP_PATH+"/account", loginRequired, changePasswordPost)
 	app.Post(APP_PATH+"/{id}", loginRequired, changeDateRangeView)
 
+	sendTestMail()
+
 	app.Listen(conf.ListenAddr)
 }
