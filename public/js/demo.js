@@ -338,8 +338,12 @@
 
   }
 
+if (typeof __active_lnk == 'undefined') {
+    window.__active_lnk = document.URL;
+}
+
 for (var i = 0; i < document.links.length; i++) {
-    if (document.links[i].href == document.URL && !document.links[i].className.includes('skip-active')) {
+    if (document.links[i].href == __active_lnk && !document.links[i].className.includes('skip-active')) {
         document.links[i].parentNode.className = 'active';
         if (document.links[i].parentNode.parentNode.className.includes('treeview-menu')) {
             document.links[i].parentNode.parentNode.parentNode.className = 'active';
@@ -348,10 +352,12 @@ for (var i = 0; i < document.links.length; i++) {
 }
 
 if (typeof __open_dashboard !== 'undefined') {
+    // var dsh = document.getElementById('dashboard_link');
+    // if (!dsh.className.includes('active')) {
+    //     dsh.className += ' active';
+    // }
     var dsh = document.getElementById('dashboard_link');
-    if (!dsh.className.includes('active')) {
-        dsh.className += ' active';
-    }
+    dsh.children[1].style.display = 'block';
 }
 
 if (typeof __draw_linechart !== 'undefined') {

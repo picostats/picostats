@@ -6,7 +6,6 @@ v 1.0 beta
 
 v 1.1 beta
 
-- keep dashboard menu open at all times
 - change the way tracking code gets generated (we don't need aes anymore)
 - display data - content, browsers, countries
 - limits for saas
@@ -78,3 +77,4 @@ v 1.0 beta
 * add logo to application
 * email verification
 * fix tabindexes & focus
+* keep dashboard menu open at all times
