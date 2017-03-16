@@ -21,19 +21,19 @@
                             <div class="box-body">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Website Name</label>
-                                    <input type="text" class="form-control" placeholder="Enter Website Name" name="name" required value="{{ .Form.Name }}">
+                                    <input type="text" class="form-control" placeholder="Enter Website Name" name="name" required value="{{ .Form.Name }}" tabindex="1">
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Website URL</label>
-                                    <input type="text" class="form-control" placeholder="Enter Website URL" name="url" required value="{{ .Form.Url }}">
+                                    <input type="text" class="form-control" placeholder="Enter Website URL" name="url" required value="{{ .Form.Url }}" tabindex="2">
                                 </div>
                             </div>
                             <div class="box-footer">
-                                <input type="submit" value="Update" class="btn btn-primary">&nbsp;&nbsp;
+                                <input type="submit" value="Update" class="btn btn-primary" tabindex="3">&nbsp;&nbsp;
 {{ if not .Form.Default }}
-                                <a href="{{ .Conf.AppUrl }}/app/websites/default/{{ .Form.Id }}" class="btn btn-default">Make Default</a>
+                                <a href="{{ .Conf.AppUrl }}/app/websites/default/{{ .Form.Id }}" class="btn btn-default" tabindex="4">Make Default</a>
 {{ end }}
-                                <a href="javascript:;" class="btn btn-danger pull-right" data-toggle="modal" data-target="#deleteModal">Delete</a>
+                                <a href="javascript:;" class="btn btn-danger pull-right" data-toggle="modal" data-target="#deleteModal" tabindex="5">Delete</a>
                             </div>
                         </form>
                     </div>

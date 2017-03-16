@@ -35,9 +35,13 @@ func signInPostView(ctx *iris.Context) {
 
 	if user.ID != 0 {
 		if user.Password == getMD5Hash(sif.Password) {
-			signIn(ctx, user)
-			pd := newPageData(ctx)
-			pd.User.redirectToDefaultWebsite(ctx)
+			if user.Verified {
+				signIn(ctx, user)
+				pd := newPageData(ctx)
+				pd.User.redirectToDefaultWebsite(ctx)
+			} else {
+				ctx.Redirect(conf.AppUrl + APP_PATH + "/verify")
+			}
 		} else {
 			err := errors.New("Email or password is wrong, please try again.")
 			pd.Errors = append(pd.Errors, &err)
