@@ -44,84 +44,40 @@ type Website struct {
 	TrackingCode string `sql:"size:255"`
 }
 
-func (w *Website) getPageViews(older, newer *time.Time) []*PageView {
-	var pvs []*PageView
-	db.Order("id").Where("website_id = ? AND created_at BETWEEN ? and ?", w.ID, older, newer).Find(&pvs)
-	return pvs
-}
-
-func (w *Website) getVisitPageViews(older, newer *time.Time) []*PageView {
-	var vpvs []*PageView
-	gpvs := w.getGroupedPageViews(older, newer)
-	for _, pv := range gpvs {
-		vpvs = append(vpvs, pv[0])
-	}
-	return vpvs
-}
-
-func (w *Website) getGroupedPageViews(older, newer *time.Time) [][]*PageView {
-	var gpvs [][]*PageView
-	pvs := w.getPageViews(older, newer)
-	push := true
-	for i, pv := range pvs {
-		first := false
-		if i == 0 {
-			pvBefore := &PageView{}
-			db.Order("id desc").Where("id < ?", pv.ID).First(pvBefore)
-			if pvBefore.ID == 0 {
-				first = true
-			} else {
-				d := getDuration(&pvBefore.CreatedAt, &pv.CreatedAt)
-				if d.Minutes() >= 30 {
-					first = true
-				} else {
-					push = false
-				}
-			}
-		} else {
-			d := getDuration(&pvs[i-1].CreatedAt, &pv.CreatedAt)
-			if d.Minutes() >= 30 {
-				first = true
-			}
-		}
-
-		if first {
-			newGroup := []*PageView{pv}
-			gpvs = append(gpvs, newGroup)
-		} else if push {
-			gpvs[len(gpvs)-1] = append(gpvs[len(gpvs)-1], pv)
-		}
-	}
-	return gpvs
-}
-
 func (w *Website) countPageViews(older, newer *time.Time) int {
 	count := 0
-	gpvs := w.getGroupedPageViews(older, newer)
-	for _, gpv := range gpvs {
-		count += len(gpv)
+	visits := w.getVisits(older, newer)
+	for _, v := range visits {
+		var cnt int
+		var pvs []*PageView
+		db.Where(&PageView{VisitID: v.ID}).Find(&pvs).Count(&cnt)
+		count += cnt
 	}
 	return count
 }
 
 func (w *Website) countVisitors(older, newer *time.Time) int {
-	gpvs := w.getGroupedPageViews(older, newer)
-	return len(gpvs)
-}
-
-func (w *Website) countVisits(older, newer *time.Time) int {
-	vpvs := w.getVisitPageViews(older, newer)
-	return len(vpvs)
+	visitors := map[uint]bool{}
+	visits := w.getVisits(older, newer)
+	for _, v := range visits {
+		visitors[v.VisitorID] = true
+	}
+	return len(visitors)
 }
 
 func (w *Website) countBouncedVisits(older, newer *time.Time) int {
 	count := 0
-	gpvs := w.getGroupedPageViews(older, newer)
-	for _, gpv := range gpvs {
-		if len(gpv) == 1 {
+
+	visits := w.getVisits(older, newer)
+	for _, v := range visits {
+		var cnt int
+		var pvs []*PageView
+		db.Where(&PageView{VisitID: v.ID}).Find(&pvs).Count(&cnt)
+		if cnt == 1 {
 			count++
 		}
 	}
+
 	return count
 }
 
@@ -164,22 +120,35 @@ func (w *Website) getDataPointsHourly(numDays int) []int {
 	return dataPoints
 }
 
+func (w *Website) getVisits(older, newer *time.Time) []*Visit {
+	var visits []*Visit
+	db.Order("id").Where("website_id = ? AND created_at BETWEEN ? AND ?", w.ID, older, newer).Find(&visits)
+	return visits
+}
+
+func (w *Website) countVisits(older, newer *time.Time) int {
+	visits := w.getVisits(older, newer)
+	return len(visits)
+}
+
 func (w *Website) getTimePerVisit(older, newer *time.Time) string {
 	seconds := 0
 
-	gpvs := w.getGroupedPageViews(older, newer)
-	for _, gpv := range gpvs {
-		if len(gpv) > 1 {
-			sinceOlder := time.Since(gpv[0].CreatedAt)
-			sinceNewer := time.Since(gpv[len(gpv)-1].CreatedAt)
+	visits := w.getVisits(older, newer)
+	for _, v := range visits {
+		var pvs []*PageView
+		db.Order("id").Where(&PageView{VisitID: v.ID}).Find(&pvs)
+		if len(pvs) > 1 {
+			sinceOlder := time.Since(pvs[0].CreatedAt)
+			sinceNewer := time.Since(pvs[len(pvs)-1].CreatedAt)
 			seconds += int(sinceOlder.Seconds() - sinceNewer.Seconds())
 		}
 	}
 
 	var d time.Duration
 
-	if len(gpvs) > 0 {
-		d = time.Duration(time.Second * time.Duration(seconds/len(gpvs)))
+	if len(visits) > 0 {
+		d = time.Duration(time.Second * time.Duration(seconds/len(visits)))
 	} else {
 		d = time.Duration(0)
 	}
@@ -190,11 +159,13 @@ func (w *Website) getTimePerVisit(older, newer *time.Time) string {
 func (w *Website) getTimeAllVisits(older, newer *time.Time) string {
 	seconds := 0
 
-	gpvs := w.getGroupedPageViews(older, newer)
-	for _, gpv := range gpvs {
-		if len(gpv) > 1 {
-			sinceOlder := time.Since(gpv[0].CreatedAt)
-			sinceNewer := time.Since(gpv[len(gpv)-1].CreatedAt)
+	visits := w.getVisits(older, newer)
+	for _, v := range visits {
+		var pvs []*PageView
+		db.Order("id").Where(&PageView{VisitID: v.ID}).Find(&pvs)
+		if len(pvs) > 1 {
+			sinceOlder := time.Since(pvs[0].CreatedAt)
+			sinceNewer := time.Since(pvs[len(pvs)-1].CreatedAt)
 			seconds += int(sinceOlder.Seconds() - sinceNewer.Seconds())
 		}
 	}
@@ -206,11 +177,16 @@ func (w *Website) getTimeAllVisits(older, newer *time.Time) string {
 
 func (w *Website) getPageViewsPerVisit(older, newer *time.Time) string {
 	count := 0
-	gpvs := w.getGroupedPageViews(older, newer)
-	for _, gpv := range gpvs {
-		count += len(gpv)
+
+	visits := w.getVisits(older, newer)
+	for _, v := range visits {
+		var cnt int
+		var pvs []*PageView
+		db.Where(&PageView{VisitID: v.ID}).Find(&pvs).Count(&cnt)
+		count += cnt
 	}
-	return fmt.Sprintf("%.2f", float64(count)/float64(len(gpvs)))
+
+	return fmt.Sprintf("%.2f", float64(count)/float64(len(visits)))
 }
 
 type Page struct {

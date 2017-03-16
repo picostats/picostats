@@ -302,6 +302,19 @@ func websiteView(ctx *iris.Context) {
 			TimeTotal:         w.getTimeAllVisits(&start, &end),
 			PageViewsPerVisit: w.getPageViewsPerVisit(&start, &end),
 		}
+		pd.Report = &Report{
+			PageViews:         w.countPageViews(&start, &end),
+			Visitors:          w.countVisitors(&start, &end),
+			Visits:            w.countVisits(&start, &end),
+			New:               w.countNew(&start, &end),
+			Returning:         w.countReturning(&start, &end),
+			DataPoints:        dataPoints,
+			DataPointsPast:    dataPointsPast,
+			BounceRate:        fmt.Sprintf("%.2f", w.getBounceRate(&start, &end)),
+			TimePerVisit:      w.getTimePerVisit(&start, &end),
+			TimeTotal:         w.getTimeAllVisits(&start, &end),
+			PageViewsPerVisit: w.getPageViewsPerVisit(&start, &end),
+		}
 		pd.Report.NewPercentage = fmt.Sprintf("%.2f", float64(pd.Report.New)/float64(pd.Report.New+pd.Report.Returning)*100)
 		pd.Report.ReturningPercentage = fmt.Sprintf("%.2f", float64(pd.Report.Returning)/float64(pd.Report.New+pd.Report.Returning)*100)
 		ctx.Render("website.html", pd)

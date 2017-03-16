@@ -29,6 +29,7 @@ func (w *Worker) work() {
 }
 
 func (w *Worker) handlePageViewRequest(pvr *PageViewRequest) {
+	var vNew *Visit
 	website := &Website{}
 	wId, _ := strconv.Atoi(aesDecrypt(pvr.WebsiteID))
 	db.First(website, wId)
@@ -38,7 +39,6 @@ func (w *Worker) handlePageViewRequest(pvr *PageViewRequest) {
 		Resolution: pvr.Resolution,
 		Language:   pvr.Language,
 	}
-
 	db.FirstOrCreate(visitor, visitor)
 
 	page := &Page{
@@ -46,22 +46,44 @@ func (w *Worker) handlePageViewRequest(pvr *PageViewRequest) {
 		Path:     pvr.Path,
 		Title:    pvr.Title,
 	}
-
 	db.FirstOrCreate(page, page)
 
 	v := &Visit{
 		WebsiteID: website.ID,
 		VisitorID: visitor.ID,
 	}
+	db.Order("id desc").Where(v).First(v)
 
-	db.Create(v)
+	if v.ID != 0 {
+		pv := &PageView{
+			VisitID: v.ID,
+			PageID:  page.ID,
+		}
+		db.Order("id desc").Where(pv).First(pv)
 
-	pv := &PageView{
-		VisitID: v.ID,
-		PageID:  page.ID,
+		delta := time.Now().Sub(pv.CreatedAt)
+		if delta.Minutes() > 30 {
+			vNew = &Visit{
+				WebsiteID: website.ID,
+				VisitorID: visitor.ID,
+			}
+			db.Create(vNew)
+		} else {
+			vNew = v
+		}
+	} else {
+		vNew = &Visit{
+			WebsiteID: website.ID,
+			VisitorID: visitor.ID,
+		}
+		db.Create(vNew)
 	}
 
-	db.Create(pv)
+	pvNew := &PageView{
+		VisitID: vNew.ID,
+		PageID:  page.ID,
+	}
+	db.Create(pvNew)
 }
 
 func initWorker() {

@@ -2,7 +2,6 @@ TODO
 
 v 1.0 beta
 
-- refactor display logic
 - cli options
 - email verification
 - account - change password, delete account
@@ -73,3 +72,4 @@ v 1.0 beta
 * check numbers, something is wrong?
 * display data - scale and filtering
 * display data - times panel
+* refactor display logic
