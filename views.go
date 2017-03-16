@@ -147,6 +147,7 @@ func newWebsitePostView(ctx *iris.Context) {
 		OwnerID: pd.User.ID,
 		Name:    wf.Name,
 		Url:     wf.Url,
+		Default: pd.User.countWebsites() == 0,
 	}
 
 	db.Create(w)

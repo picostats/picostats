@@ -34,6 +34,13 @@ func (u *User) redirectToDefaultWebsite(ctx *iris.Context) {
 	return
 }
 
+func (u *User) countWebsites() int {
+	var websites []*Website
+	var cnt int
+	db.Where("owner_id = ?", u.ID).Find(&websites).Count(&cnt)
+	return cnt
+}
+
 type Website struct {
 	gorm.Model
 	Owner        *User
