@@ -50,7 +50,7 @@ type PageViewRequest struct {
 
 type Report struct {
 	Visits              int
-	Users               int
+	Visitors            int
 	PageViews           int
 	BounceRate          string
 	New                 int

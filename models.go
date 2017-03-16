@@ -81,7 +81,6 @@ func (w *Website) getGroupedPageViews(older, newer *time.Time) [][]*PageView {
 		} else {
 			d := getDuration(&pvs[i-1].CreatedAt, &pv.CreatedAt)
 			if d.Minutes() >= 30 {
-				// vpvs = append(vpvs, pv)
 				first = true
 			}
 		}
@@ -97,17 +96,17 @@ func (w *Website) getGroupedPageViews(older, newer *time.Time) [][]*PageView {
 }
 
 func (w *Website) countPageViews(older, newer *time.Time) int {
-	pvs := w.getPageViews(older, newer)
-	return len(pvs)
+	count := 0
+	gpvs := w.getGroupedPageViews(older, newer)
+	for _, gpv := range gpvs {
+		count += len(gpv)
+	}
+	return count
 }
 
-func (w *Website) countUsers(older, newer *time.Time) int {
-	counter := map[uint]bool{}
-	pvs := w.getPageViews(older, newer)
-	for _, pv := range pvs {
-		counter[pv.VisitorID] = true
-	}
-	return len(counter)
+func (w *Website) countVisitors(older, newer *time.Time) int {
+	gpvs := w.getGroupedPageViews(older, newer)
+	return len(gpvs)
 }
 
 func (w *Website) countVisits(older, newer *time.Time) int {
@@ -136,7 +135,7 @@ func (w *Website) getBounceRate(older, newer *time.Time) float64 {
 }
 
 func (w *Website) countNew(older, newer *time.Time) int {
-	return w.countUsers(older, newer)
+	return w.countVisitors(older, newer)
 }
 
 func (w *Website) countReturning(older, newer *time.Time) int {
@@ -214,13 +213,6 @@ func (w *Website) getPageViewsPerVisit(older, newer *time.Time) string {
 	return fmt.Sprintf("%.2f", float64(count)/float64(len(gpvs)))
 }
 
-type Visitor struct {
-	gorm.Model
-	IpAddress  string `sql:"size:255"`
-	Resolution string `sql:"size:255"`
-	Language   string `sql:"size:255"`
-}
-
 type Page struct {
 	gorm.Model
 	Hostname string `sql:"size:255"`
@@ -228,12 +220,25 @@ type Page struct {
 	Title    string `sql:"size:255"`
 }
 
-type PageView struct {
+type Visitor struct {
+	gorm.Model
+	IpAddress  string `sql:"size:255"`
+	Resolution string `sql:"size:255"`
+	Language   string `sql:"size:255"`
+}
+
+type Visit struct {
 	gorm.Model
 	Website   *Website
 	WebsiteID uint `sql:"index"`
 	Visitor   *Visitor
 	VisitorID uint `sql:"index"`
-	Page      *Page
-	PageID    uint `sql:"index"`
+}
+
+type PageView struct {
+	gorm.Model
+	Visit   *Visit
+	VisitID uint `sql:"index"`
+	Page    *Page
+	PageID  uint `sql:"index"`
 }

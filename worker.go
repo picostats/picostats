@@ -49,10 +49,16 @@ func (w *Worker) handlePageViewRequest(pvr *PageViewRequest) {
 
 	db.FirstOrCreate(page, page)
 
-	pv := &PageView{
+	v := &Visit{
 		WebsiteID: website.ID,
 		VisitorID: visitor.ID,
-		PageID:    page.ID,
+	}
+
+	db.Create(v)
+
+	pv := &PageView{
+		VisitID: v.ID,
+		PageID:  page.ID,
 	}
 
 	db.Create(pv)

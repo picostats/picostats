@@ -1,7 +1,7 @@
 'use strict';
 
 var queue = window.ps.q || [];
-var trackerUrl = '//localhost:8080/app/tracker.png';
+var trackerUrl = '//picostats.ngrok.io/app/tracker.png';
 var website = '';
 var commands = {
     "pageview": pageview,

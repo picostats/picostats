@@ -291,7 +291,7 @@ func websiteView(ctx *iris.Context) {
 
 		pd.Report = &Report{
 			PageViews:         w.countPageViews(&start, &end),
-			Users:             w.countUsers(&start, &end),
+			Visitors:          w.countVisitors(&start, &end),
 			Visits:            w.countVisits(&start, &end),
 			New:               w.countNew(&start, &end),
 			Returning:         w.countReturning(&start, &end),
