@@ -16,6 +16,8 @@ var red *redis.Client
 
 var clip *CliParser
 
+var em *EmailManager
+
 func main() {
 	// Loads and parses config.json file to struct
 	conf = initConfig()
@@ -34,6 +36,9 @@ func main() {
 
 	// Initializes Redis connection
 	red = initRedis()
+
+	// Initializes email service
+	initEmails()
 
 	// Initializes worker and starts saving data
 	initWorker()
@@ -59,7 +64,7 @@ func main() {
 	app.Post(APP_PATH+"/account", loginRequired, changePasswordPost)
 	app.Post(APP_PATH+"/{id}", loginRequired, changeDateRangeView)
 
-	sendTestMail()
+	SendVerificationEmail("piha.tihomir@gmail.com", "https://www.picostats.com")
 
 	app.Listen(conf.ListenAddr)
 }

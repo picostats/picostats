@@ -10,4 +10,6 @@ const (
 	USER_ID = "userid"
 
 	TRACKER_IMAGE = "public/tracker.png"
+
+	DEFAULT_EMAIL_SENDER = "no-reply@picostats.com"
 )

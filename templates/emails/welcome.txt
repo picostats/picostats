@@ -1,0 +1,5 @@
+Welcome to PicoStats!
+
+Thank you for choosing PicoStats for your web analytics tool. Please verify your email address in order to start using your account.
+
+{{ .VerificationLink }}
