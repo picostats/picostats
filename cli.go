@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 )
 
 type CliParser struct {
@@ -49,6 +50,12 @@ func (c *CliParser) parseCli() {
 	for _, arg := range os.Args {
 		if arg == "server" || arg == "worker" || arg == "serverww" {
 			c.Command = arg
+		}
+
+		if strings.Contains(arg, "-d") || strings.Contains(arg, "--dev") {
+			if !*dev && !*devLong {
+				conf.Dev = false
+			}
 		}
 	}
 }
