@@ -14,9 +14,14 @@ var db *gorm.DB
 
 var red *redis.Client
 
+var clip *CliParser
+
 func main() {
 	// Loads and parses config.json file to struct
 	conf = initConfig()
+
+	// Parses CLI options and arguments
+	initCli()
 
 	// Initializes Iris web framework
 	app = initIris()

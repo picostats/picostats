@@ -10,22 +10,20 @@ import (
 type Worker struct{}
 
 func (w *Worker) work() {
-	go func() {
-		for {
-			hasKay, _ := red.Exists("pvs").Result()
-			if hasKay {
-				pvJson := red.LPop("pvs").Val()
-				pvr := &PageViewRequest{}
-				err := json.Unmarshal([]byte(pvJson), pvr)
-				if err != nil {
-					log.Printf("[worker.go] Error in unarshall: %s", err)
-				}
-				w.handlePageViewRequest(pvr)
-			} else {
-				time.Sleep(time.Millisecond * 200)
+	for {
+		hasKay, _ := red.Exists("pvs").Result()
+		if hasKay {
+			pvJson := red.LPop("pvs").Val()
+			pvr := &PageViewRequest{}
+			err := json.Unmarshal([]byte(pvJson), pvr)
+			if err != nil {
+				log.Printf("[worker.go] Error in unarshall: %s", err)
 			}
+			w.handlePageViewRequest(pvr)
+		} else {
+			time.Sleep(time.Millisecond * 200)
 		}
-	}()
+	}
 }
 
 func (w *Worker) handlePageViewRequest(pvr *PageViewRequest) {
@@ -88,5 +86,9 @@ func (w *Worker) handlePageViewRequest(pvr *PageViewRequest) {
 
 func initWorker() {
 	w := Worker{}
-	w.work()
+	if clip.Command == "worker" {
+		w.work()
+	} else if clip.Command == "server" {
+		go w.work()
+	}
 }
