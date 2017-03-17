@@ -2,10 +2,6 @@ TODO
 
 v 1.0 beta
 
-- mvp website
-
-v 1.1 beta
-
 - change the way tracking code gets generated (we don't need aes anymore)
 - display data - content, browsers, countries
 - limits for saas
@@ -13,8 +9,15 @@ v 1.1 beta
 - enable demo
 - sign in - next
 - add tracking code to itself
-
 - fix app path confusion
+
+- website - seo
+- website - facebook tags
+- website - create facebook page
+- website - downloads - binaries
+
+v 1.1 beta
+
 - check indexes
 - real time stats
 - change default range
@@ -78,3 +81,9 @@ v 1.0 beta
 * email verification
 * fix tabindexes & focus
 * keep dashboard menu open at all times
+* mvp website - find template
+* mvp website - http server
+* mvp website - config
+* website - homepage footer text
+* website - demo title and subtitle
+* website - downloads title and subtitle
