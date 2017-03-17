@@ -1,0 +1,11 @@
+{
+    "app_url":              "/",
+    "db_url":               "user=yourdbuser password=yourdbpassword dbname=yourdbname sslmode=disable",
+    "redis_url":            "localhost:6379",
+    "listen_addr":          ":8080",
+    "log_sql":              false,
+    "dev":                  false,
+    "registration_enabled": false,
+    "encryption_key":       "generate 32 chars string",
+    "sparkpost_key":        ""
+}
