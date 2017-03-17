@@ -48,7 +48,7 @@ type Website struct {
 	Name         string `sql:"size:255"`
 	Url          string `sql:"size:255"`
 	Default      bool   `sql:"not null"`
-	TrackingCode string `sql:"size:255"`
+	TrackingCode string `sql:"size:255;unique_index"`
 }
 
 func (w *Website) countPageViews(older, newer *time.Time) int {

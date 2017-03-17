@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tomasen/realip"
 	"gopkg.in/kataras/iris.v6"
 )
 
@@ -124,11 +125,7 @@ func signUpPostView(ctx *iris.Context) {
 }
 
 func collectImgView(ctx *iris.Context) {
-	ip := ctx.Request.Header.Get("X-Forwarded-For")
-
-	if len(ip) == 0 {
-		ip = strings.Split(ctx.Request.RemoteAddr, ":")[0]
-	}
+	ip := realip.RealIP(ctx.Request)
 
 	pv := &PageViewRequest{
 		WebsiteID:  ctx.URLParam("w"),
@@ -181,7 +178,7 @@ func newWebsitePostView(ctx *iris.Context) {
 
 	db.Create(w)
 
-	w.TrackingCode = aesEncrypt(strconv.Itoa(int(w.ID)))
+	w.TrackingCode = getMD5Hash(strconv.Itoa(int(w.ID)))
 	db.Save(w)
 
 	ctx.Redirect(conf.AppUrl + "/websites/" + strconv.Itoa(int(w.ID)))

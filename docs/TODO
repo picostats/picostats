@@ -2,12 +2,11 @@ TODO
 
 v 1.0 beta
 
-- change the way tracking code gets generated (we don't need aes anymore)
 - limits for saas
 - payment and activation
 - add tracking code to itself
-- display data - content, browsers, countries
 - timezones issue
+- display data - content, browsers, countries
 
 - website - seo
 - website - facebook tags
@@ -16,6 +15,7 @@ v 1.0 beta
 
 v 1.1 beta
 
+- IPv6 issue
 - check indexes
 - real time stats
 - change default range
@@ -92,3 +92,4 @@ v 1.0 beta
 * website - google webmasters tools
 * limit demo
 * sign in - next
+* change the way tracking code gets generated (we don't need aes anymore)

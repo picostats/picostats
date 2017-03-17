@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/jinzhu/gorm"
 	"gopkg.in/kataras/iris.v6"
 	"gopkg.in/redis.v5"
@@ -44,8 +42,6 @@ func main() {
 
 	// Initializes worker and starts saving data
 	initWorker()
-
-	log.Println(appPath())
 
 	// GET view handlers
 	app.Get(appPath(), redirectView)

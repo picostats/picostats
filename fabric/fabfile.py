@@ -18,4 +18,5 @@ def deploy():
     run('rm -rf picostats')
     run('mv picostatsnew picostats')
     run('rm picostatsnew.tar.gz')
+    local('rm picostatsnew.tar.gz')
     sudo('supervisorctl reload')

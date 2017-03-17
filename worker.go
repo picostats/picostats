@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"log"
-	"strconv"
 	"time"
 )
 
@@ -29,8 +28,7 @@ func (w *Worker) work() {
 func (w *Worker) handlePageViewRequest(pvr *PageViewRequest) {
 	var vNew *Visit
 	website := &Website{}
-	wId, _ := strconv.Atoi(aesDecrypt(pvr.WebsiteID))
-	db.First(website, wId)
+	db.Where("tracking_code = ?", pvr.WebsiteID).First(website)
 
 	visitor := &Visitor{
 		IpAddress:  pvr.IpAddress,
