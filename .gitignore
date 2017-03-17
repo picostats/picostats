@@ -4,3 +4,4 @@ fabric/venv
 fabric/venv/*
 fabric/production.json
 *.db
+*.pyc
