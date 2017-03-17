@@ -1,4 +1,4 @@
-![PicoStats](https://www.picostats.com/app/public/img/logo-email.png)
+-> ![PicoStats](https://www.picostats.com/app/public/img/logo-email.png) <-
 
 # PicoStats
 
