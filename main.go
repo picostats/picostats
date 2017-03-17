@@ -44,6 +44,7 @@ func main() {
 	initWorker()
 
 	// GET view handlers
+	app.Get(appPath(), redirectView)
 	app.Get(appPath()+"/sign-in", signInView)
 	app.Get(appPath()+"/sign-up", signUpView)
 	app.Get(appPath()+"/sign-out", signOutView)

@@ -38,6 +38,7 @@ function pageview() {
     }
 
     var d = {
+        stamp: Date.now().toString(),
         w: website,
         h: location.hostname,
         t: document.title,

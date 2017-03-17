@@ -12,6 +12,10 @@ import (
 	"gopkg.in/kataras/iris.v6"
 )
 
+func redirectView(ctx *iris.Context) {
+	ctx.Redirect("/")
+}
+
 func signInView(ctx *iris.Context) {
 	pd := newPageData(ctx)
 	if isSignedIn(ctx) {

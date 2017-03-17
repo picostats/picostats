@@ -2,7 +2,6 @@ TODO
 
 v 1.0 beta
 
-- app redirect (app root)
 - make a deployment script
 - change the way tracking code gets generated (we don't need aes anymore)
 - limits for saas
@@ -91,3 +90,4 @@ v 1.0 beta
 * website - downloads title and subtitle
 * fix app path confusion
 * deploy website and new version
+* app redirect (app root)
