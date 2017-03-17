@@ -1,6 +1,7 @@
 {
     "app_url":              "/",
-    "db_url":               "user=yourdbuser password=yourdbpassword dbname=yourdbname sslmode=disable",
+    "db_type":              "sqlite3",    
+    "db_url":               "data.db",
     "redis_url":            "localhost:6379",
     "listen_addr":          ":8080",
     "log_sql":              false,

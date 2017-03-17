@@ -3,8 +3,8 @@ TODO
 v 1.0 beta
 
 - limits for saas
-- payment and activation
 - add tracking code to itself
+- payment and activation
 - timezones issue
 - display data - content, browsers, countries
 
@@ -36,6 +36,7 @@ v 1.1 beta
 - API
 - exclude me from tracking
 - exclude IPs from tracking
+- docker image
 
 DONE
 

@@ -7,6 +7,7 @@ import (
 )
 
 type Config struct {
+	DBType              string `json:"db_type"`
 	DBUrl               string `json:"db_url"`
 	AppUrl              string `json:"app_url"`
 	RedisUrl            string `json:"redis_url"`
