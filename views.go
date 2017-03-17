@@ -13,7 +13,18 @@ import (
 )
 
 func redirectView(ctx *iris.Context) {
-	ctx.Redirect("/")
+	pd := newPageData(ctx)
+	if isSignedIn(ctx) {
+		if pd.ErrorFlash != nil {
+			ctx.Session().SetFlash("error", pd.ErrorFlash)
+		}
+		if pd.SuccessFlash != nil {
+			ctx.Session().SetFlash("success", pd.SuccessFlash)
+		}
+		pd.User.redirectToDefaultWebsite(ctx)
+	} else {
+		ctx.Redirect("/")
+	}
 }
 
 func signInView(ctx *iris.Context) {

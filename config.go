@@ -16,6 +16,7 @@ type Config struct {
 	RegistrationEnabled bool   `json:"registration_enabled"`
 	EncryptionKey       []byte `json:"encryption_key"`
 	SparkpostKey        string `json:"sparkpost_key"`
+	DemoLock            uint   `json:"demo_lock"`
 }
 
 func (c *Config) load(configFile string) error {
