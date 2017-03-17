@@ -15,7 +15,6 @@ v 1.0 beta
 - website - facebook tags
 - website - create facebook page
 - website - downloads - binaries
-- website - google webmasters tools
 
 v 1.1 beta
 
@@ -92,3 +91,4 @@ v 1.0 beta
 * app redirect (app root)
 * make a deployment script
 * sign in link on demo page
+* website - google webmasters tools

@@ -88,6 +88,9 @@ func newPageData(ctx *iris.Context) *PageData {
 	session := ctx.Session()
 	pd.SuccessFlash = session.GetFlash("success")
 	pd.ErrorFlash = session.GetFlash("error")
+	if conf.AppUrl == "/" {
+		conf.AppUrl = ""
+	}
 	return pd
 }
 
