@@ -6,7 +6,7 @@
         <div class="login-box-body">
             <p class="login-box-msg">Sign in to start your session</p>
 
-            <form action="{{ .Conf.AppUrl }}/app/sign-in" method="post">
+            <form action="{{ .Conf.AppUrl }}/sign-in" method="post">
                 <div class="form-group has-feedback">
                     <input type="email" class="form-control" placeholder="Email" name="email" required value="{{ .Form.Email }}" tabindex="1" autofocus>
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
@@ -34,7 +34,7 @@
                 </div>
             </form>
 
-            <a href="{{ .Conf.AppUrl }}/app/sign-up" class="text-center" tabindex="5">Register a new user</a>
+            <a href="{{ .Conf.AppUrl }}/sign-up" class="text-center" tabindex="5">Register a new user</a>
 
         </div>
         <!-- /.login-box-body -->

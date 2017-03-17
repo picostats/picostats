@@ -2,26 +2,28 @@ TODO
 
 v 1.0 beta
 
+- app redirect (app root)
+- make a deployment script
 - change the way tracking code gets generated (we don't need aes anymore)
-- display data - content, browsers, countries
 - limits for saas
 - payment and activation
 - enable demo
 - sign in - next
 - add tracking code to itself
-- fix app path confusion
+- display data - content, browsers, countries
+- timezones issue
 
 - website - seo
 - website - facebook tags
 - website - create facebook page
 - website - downloads - binaries
+- website - google webmasters tools
 
 v 1.1 beta
 
 - check indexes
 - real time stats
 - change default range
-- timezones issue
 - display data - trends (percentage)
 - world map
 - data display - other charts on main chart (visitors, pageviews, ...)
@@ -87,3 +89,5 @@ v 1.0 beta
 * website - homepage footer text
 * website - demo title and subtitle
 * website - downloads title and subtitle
+* fix app path confusion
+* deploy website and new version

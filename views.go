@@ -40,7 +40,7 @@ func signInPostView(ctx *iris.Context) {
 				pd := newPageData(ctx)
 				pd.User.redirectToDefaultWebsite(ctx)
 			} else {
-				ctx.Redirect(conf.AppUrl + APP_PATH + "/verify")
+				ctx.Redirect(conf.AppUrl + "/verify")
 			}
 		} else {
 			err := errors.New("Email or password is wrong, please try again.")
@@ -58,7 +58,7 @@ func signInPostView(ctx *iris.Context) {
 
 func signOutView(ctx *iris.Context) {
 	signOut(ctx)
-	ctx.Redirect(conf.AppUrl + APP_PATH + "/sign-in")
+	ctx.Redirect(conf.AppUrl + "/sign-in")
 }
 
 func signUpView(ctx *iris.Context) {
@@ -86,9 +86,9 @@ func signUpPostView(ctx *iris.Context) {
 		if suf.Password1 == suf.Password2 {
 			user := &User{Email: suf.Email, Password: getMD5Hash(suf.Password1)}
 			db.Create(user)
-			verificationLink := conf.AppUrl + APP_PATH + "/verify/" + aesEncrypt(strconv.Itoa(int(user.ID)))
+			verificationLink := conf.AppUrl + "/verify/" + aesEncrypt(strconv.Itoa(int(user.ID)))
 			sendVerificationEmail(user.Email, verificationLink)
-			ctx.Redirect(conf.AppUrl + APP_PATH + "/verify")
+			ctx.Redirect(conf.AppUrl + "/verify")
 		} else {
 			err := errors.New("Passwords don't match, please try again.")
 			pd.Errors = append(pd.Errors, &err)
@@ -105,6 +105,12 @@ func signUpPostView(ctx *iris.Context) {
 }
 
 func collectImgView(ctx *iris.Context) {
+	ip := ctx.Request.Header.Get("X-Forwarded-For")
+
+	if len(ip) == 0 {
+		ip = strings.Split(ctx.Request.RemoteAddr, ":")[0]
+	}
+
 	pv := &PageViewRequest{
 		WebsiteID:  ctx.URLParam("w"),
 		Path:       ctx.URLParam("p"),
@@ -113,7 +119,7 @@ func collectImgView(ctx *iris.Context) {
 		Language:   ctx.URLParam("l"),
 		Resolution: ctx.URLParam("s"),
 		Referrer:   ctx.URLParam("r"),
-		IpAddress:  strings.Split(ctx.Request.RemoteAddr, ":")[0],
+		IpAddress:  ip,
 	}
 
 	pvJson, err := json.Marshal(pv)
@@ -159,7 +165,7 @@ func newWebsitePostView(ctx *iris.Context) {
 	w.TrackingCode = aesEncrypt(strconv.Itoa(int(w.ID)))
 	db.Save(w)
 
-	ctx.Redirect(conf.AppUrl + APP_PATH + "/websites/" + strconv.Itoa(int(w.ID)))
+	ctx.Redirect(conf.AppUrl + "/websites/" + strconv.Itoa(int(w.ID)))
 }
 
 func editWebsiteView(ctx *iris.Context) {
@@ -208,7 +214,7 @@ func editWebsitePostView(ctx *iris.Context) {
 		w.Url = wf.Url
 		db.Save(w)
 		session.SetFlash("success", "Website successfully updated.")
-		ctx.Redirect(conf.AppUrl + APP_PATH + "/websites/" + strconv.Itoa(int(w.ID)))
+		ctx.Redirect(conf.AppUrl + "/websites/" + strconv.Itoa(int(w.ID)))
 	} else {
 		session.SetFlash("error", "You are not the owner of this website.")
 		pd.User.redirectToDefaultWebsite(ctx)
@@ -345,7 +351,7 @@ func changeDateRangeView(ctx *iris.Context) {
 	session.Set("date-range-start", drf.Start)
 	session.Set("date-range-end", drf.End)
 
-	ctx.Redirect(conf.AppUrl + APP_PATH + "/" + wId)
+	ctx.Redirect(conf.AppUrl + "/" + wId)
 }
 
 func websiteDeleteView(ctx *iris.Context) {
@@ -381,7 +387,7 @@ func changePasswordPost(ctx *iris.Context) {
 			db.Save(pd.User)
 			session := ctx.Session()
 			session.SetFlash("success", "You have successfully changed your PicoStats password.")
-			ctx.Redirect(conf.AppUrl + APP_PATH + "/account")
+			ctx.Redirect(conf.AppUrl + "/account")
 			return
 		} else {
 			err := errors.New("Your current password is not right, please try again.")
@@ -398,7 +404,7 @@ func changePasswordPost(ctx *iris.Context) {
 func accountDeleteView(ctx *iris.Context) {
 	pd := newPageData(ctx)
 	db.Delete(pd.User)
-	ctx.Redirect(conf.AppUrl + APP_PATH + "/sign-out")
+	ctx.Redirect(conf.AppUrl + "/sign-out")
 }
 
 func verifyMessageView(ctx *iris.Context) {

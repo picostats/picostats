@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -217,4 +218,12 @@ func getChartScale(startSubtract, endSubract int) []string {
 		}
 	}
 	return chartScale
+}
+
+func appPath() string {
+	u, err := url.Parse(conf.AppUrl)
+	if err != nil {
+		log.Printf("[helpers.go] Error parsing URL: %s", err)
+	}
+	return u.Path
 }

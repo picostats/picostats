@@ -9,7 +9,7 @@ import (
 func initIris() *iris.Framework {
 	app := iris.New()
 	app.Adapt(gorillamux.New())
-	app.StaticWeb("/public", "./public")
+	app.StaticWeb(appPath()+"/public", "./public")
 	if conf.Dev {
 		app.Adapt(iris.DevLogger())
 		app.Adapt(view.HTML("./templates", ".html").Layout("layout.html").Reload(true))

@@ -26,9 +26,9 @@ func (u *User) redirectToDefaultWebsite(ctx *iris.Context) {
 	w := u.getDefaultWebsite()
 	var redirectUrl string
 	if w.ID == 0 {
-		redirectUrl = conf.AppUrl + APP_PATH + "/websites/new"
+		redirectUrl = conf.AppUrl + "/websites/new"
 	} else {
-		redirectUrl = conf.AppUrl + APP_PATH + "/" + strconv.Itoa(int(w.ID))
+		redirectUrl = conf.AppUrl + "/" + strconv.Itoa(int(w.ID))
 	}
 	ctx.Redirect(redirectUrl)
 	return

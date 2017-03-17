@@ -39,7 +39,7 @@
 
         <header class="main-header">
             <!-- Logo -->
-            <a href="{{ .Conf.AppUrl }}/app" class="logo skip-active">
+            <a href="{{ .Conf.AppUrl }}" class="logo skip-active">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><img src="{{ .Conf.AppUrl }}/public/img/logo-icon.png"></span>
                 <!-- logo for regular state and mobile devices -->
@@ -59,7 +59,7 @@
                     <ul class="nav navbar-nav">
                         <!-- Control Sidebar Toggle Button -->
                         <li>
-                            <a href="{{ .Conf.AppUrl }}/app/sign-out"><i class="fa fa-sign-out"></i></a>
+                            <a href="{{ .Conf.AppUrl }}/sign-out"><i class="fa fa-sign-out"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -94,18 +94,18 @@
                         </a>
                         <ul class="treeview-menu">
 {{ range $key, $website := .Websites }}
-                            <li><a href="{{ $.Conf.AppUrl }}/app/{{ $website.ID }}"><i class="fa fa-link"></i> {{ $website.Name }}</a></li>
+                            <li><a href="{{ $.Conf.AppUrl }}/{{ $website.ID }}"><i class="fa fa-link"></i> {{ $website.Name }}</a></li>
 {{ end }}
-                            <li><a href="{{ .Conf.AppUrl }}/app/websites/new"><i class="fa fa-plus"></i> New Website</a></li>
+                            <li><a href="{{ .Conf.AppUrl }}/websites/new"><i class="fa fa-plus"></i> New Website</a></li>
                         </ul>
                     </li>
                     <li>
-                        <a href="{{ .Conf.AppUrl }}/app/account">
+                        <a href="{{ .Conf.AppUrl }}/account">
                             <i class="fa fa-user"></i> <span>Account</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ .Conf.AppUrl }}/app/sign-out">
+                        <a href="{{ .Conf.AppUrl }}/sign-out">
                             <i class="fa fa-sign-out"></i>
                             <span>Sign Out</span>
                         </a>
@@ -146,6 +146,17 @@
     <script src="{{ .Conf.AppUrl }}/public/plugins/daterangepicker/daterangepicker.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{{ .Conf.AppUrl }}/public/js/demo.js"></script>
+
+    <!-- PicoStats Tracker (www.picostats.com) -->
+    <script>
+        (function(d, w, t, o){w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};
+        a=d.createElement('script'),m=d.getElementsByTagName('script')[0];a.async=1;a.src=t;
+        m.parentNode.insertBefore(a,m)})(document, window, '{{ .Conf.AppUrl }}/public/tracker.js', 'ps');
+
+        ps('create', 'rXxLF_rS8gQd72U-LD3v6IU=');
+        ps('pageview');
+    </script>
+    <!-- / PicoStats Tracker -->
 
 </body>
 </html>

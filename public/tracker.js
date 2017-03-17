@@ -1,7 +1,7 @@
 'use strict';
 
 var queue = window.ps.q || [];
-var trackerUrl = '//localhost:8080/app/tracker.png';
+var trackerUrl = '//www.picostats.com/app/tracker.png';
 var website = '';
 var commands = {
     "pageview": pageview,
@@ -48,6 +48,7 @@ function pageview() {
     };
 
     var i = document.createElement('img');
+    i.style.display = 'none';
     i.src = trackerUrl + stringifyObject(d);
     document.body.appendChild(i);
 }

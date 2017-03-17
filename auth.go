@@ -6,7 +6,7 @@ import (
 
 func loginRequired(ctx *iris.Context) {
 	if !isSignedIn(ctx) {
-		ctx.Redirect(conf.AppUrl + APP_PATH + "/sign-in")
+		ctx.Redirect(conf.AppUrl + "/sign-in")
 	} else {
 		ctx.Next()
 	}

@@ -55,7 +55,6 @@ func (w *Worker) handlePageViewRequest(pvr *PageViewRequest) {
 	if v.ID != 0 {
 		pv := &PageView{
 			VisitID: v.ID,
-			PageID:  page.ID,
 		}
 		db.Order("id desc").Where(pv).First(pv)
 
