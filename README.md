@@ -1,3 +1,5 @@
+![PicoStats](https://www.picostats.com/app/public/img/logo-email.png)
+
 # PicoStats
 
 Free and Open Source Web Analytics Software - [PicoStats](https://www.picostats.com)
