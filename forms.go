@@ -3,6 +3,7 @@ package main
 type SignInForm struct {
 	Email    string `form:"email"`
 	Password string `form:"password"`
+	Next     string `form:"next"`
 }
 
 type SignUpForm struct {

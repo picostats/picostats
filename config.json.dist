@@ -7,5 +7,6 @@
     "dev":                  false,
     "registration_enabled": false,
     "encryption_key":       "generate 32 chars string",
-    "sparkpost_key":        ""
+    "sparkpost_key":        "",
+    "demo_lock":            0
 }

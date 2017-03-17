@@ -53,7 +53,11 @@ func signInPostView(ctx *iris.Context) {
 			if user.Verified {
 				signIn(ctx, user)
 				pd := newPageData(ctx)
-				pd.User.redirectToDefaultWebsite(ctx)
+				if len(sif.Next) > 0 {
+					ctx.Redirect(sif.Next)
+				} else {
+					pd.User.redirectToDefaultWebsite(ctx)
+				}
 			} else {
 				ctx.Redirect(conf.AppUrl + "/verify")
 			}

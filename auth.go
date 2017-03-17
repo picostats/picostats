@@ -8,7 +8,12 @@ import (
 
 func loginRequired(ctx *iris.Context) {
 	if !isSignedIn(ctx) {
-		ctx.Redirect(conf.AppUrl + "/sign-in")
+		redirect := conf.AppUrl + "/sign-in"
+		path := ctx.Request.URL.String()
+		if len(path) > 0 {
+			redirect += "?next=" + path
+		}
+		ctx.Redirect(redirect)
 	} else {
 		if conf.DemoLock > 0 {
 			session := ctx.Session()
@@ -37,7 +42,6 @@ func loginRequired(ctx *iris.Context) {
 				}
 			}
 		}
-
 		ctx.Next()
 	}
 }
