@@ -1,5 +1,5 @@
 <p align="center">
-![PicoStats](https://www.picostats.com/app/public/img/logo-email.png)
+<img src="https://www.picostats.com/app/public/img/logo-email.png">
 </p>
 
 # PicoStats
