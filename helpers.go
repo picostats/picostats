@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"net/url"
@@ -86,8 +87,14 @@ func newPageData(ctx *iris.Context) *PageData {
 		pd.Websites = websites
 	}
 	session := ctx.Session()
-	pd.SuccessFlash = session.GetFlash("success")
-	pd.ErrorFlash = session.GetFlash("error")
+	sFl := session.GetFlash("success")
+	eFl := session.GetFlash("error")
+	if sFl != nil {
+		pd.SuccessFlash = template.HTML(sFl.(string))
+	}
+	if eFl != nil {
+		pd.ErrorFlash = template.HTML(eFl.(string))
+	}
 	if conf.AppUrl == "/" {
 		conf.AppUrl = ""
 	}

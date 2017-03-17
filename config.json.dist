@@ -9,5 +9,6 @@
     "registration_enabled": false,
     "encryption_key":       "generate 32 chars string",
     "sparkpost_key":        "",
-    "demo_lock":            0
+    "demo_lock":            0,
+    "max_websites":         1
 }

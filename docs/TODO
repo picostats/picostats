@@ -2,7 +2,6 @@ TODO
 
 v 1.0 beta
 
-- limits for saas
 - add tracking code to itself
 - payment and activation
 - timezones issue
@@ -94,3 +93,4 @@ v 1.0 beta
 * limit demo
 * sign in - next
 * change the way tracking code gets generated (we don't need aes anymore)
+* limits for saas

@@ -18,6 +18,7 @@ type Config struct {
 	EncryptionKey       []byte `json:"encryption_key"`
 	SparkpostKey        string `json:"sparkpost_key"`
 	DemoLock            uint   `json:"demo_lock"`
+	MaxWebsites         int    `json:"max_websites"`
 }
 
 func (c *Config) load(configFile string) error {

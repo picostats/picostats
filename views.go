@@ -157,6 +157,14 @@ func accountView(ctx *iris.Context) {
 
 func newWebsiteView(ctx *iris.Context) {
 	pd := newPageData(ctx)
+
+	if pd.User.countWebsites() == conf.MaxWebsites {
+		session := ctx.Session()
+		session.SetFlash("error", "You've reached maximum number of websites. If you need more, please <a href=\"https://www.picostats.com/pricing\"><strong>purchase</strong></a> PicoStats Premium or install PicoStats on your own server.")
+		pd.User.redirectToDefaultWebsite(ctx)
+		return
+	}
+
 	ctx.Render("websites-new.html", pd)
 }
 
