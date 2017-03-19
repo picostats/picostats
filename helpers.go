@@ -186,13 +186,15 @@ func getDuration(older, newer *time.Time) *time.Duration {
 func getTimeDaysAgo(numDays int, ctx *iris.Context) *time.Time {
 	numDays--
 	now := time.Now()
+	log.Println(now)
 	session := ctx.Session()
 	offset := session.Get("offset")
 	offsetInt, err := strconv.Atoi(offset.(string))
+	log.Println(offsetInt)
 	if err != nil {
 		log.Printf("[helpers.go] Error parsing offset: %s", err)
 	}
-	timeAgo := now.Truncate(time.Hour).Add(-time.Hour*time.Duration(now.Hour())).Add(time.Minute*time.Duration(offsetInt)).AddDate(0, 0, -numDays)
+	timeAgo := now.Truncate(time.Hour).Add(-time.Hour*time.Duration(now.Hour())).AddDate(0, 0, -numDays)
 	log.Println(timeAgo)
 	return &timeAgo
 }
