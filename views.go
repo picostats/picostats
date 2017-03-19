@@ -44,14 +44,17 @@ func installView(ctx *iris.Context) {
 func installPostView(ctx *iris.Context) {
 	pd := newPageData(ctx)
 
-	suf := &SignUpForm{}
-	err := ctx.ReadForm(suf)
+	inf := &InstallForm{}
+	err := ctx.ReadForm(inf)
 	if err != nil {
 		log.Printf("[views.go] Error reading SignUpForm: %s", err)
 	}
 
-	if suf.Password1 == suf.Password2 {
-		user := &User{Email: suf.Email, Password: getMD5Hash(suf.Password1), MaxWebsites: conf.MaxWebsites, Verified: true}
+	session := ctx.Session()
+	session.Set("offset", inf.Offset)
+
+	if inf.Password1 == inf.Password2 {
+		user := &User{Email: inf.Email, Password: getMD5Hash(inf.Password1), MaxWebsites: conf.MaxWebsites, Verified: true}
 		db.Create(user)
 		signIn(ctx, user)
 		ctx.Redirect(conf.AppUrl + "/install2")
@@ -60,7 +63,7 @@ func installPostView(ctx *iris.Context) {
 		pd.Errors = append(pd.Errors, &err)
 	}
 
-	pd.Form = &suf
+	pd.Form = &inf
 
 	ctx.Render("install.html", pd, iris.RenderOptions{"layout": "layout2.html"})
 }
@@ -421,7 +424,6 @@ func changeDateRangeView(ctx *iris.Context) {
 	wId := ctx.Param("id")
 
 	drf := &DateRangeForm{}
-	// log.Println(drf.Offset)
 	err := ctx.ReadForm(drf)
 	if err != nil {
 		log.Printf("[views.go] Error reading DateRangeForm: %s", err)

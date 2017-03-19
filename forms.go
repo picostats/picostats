@@ -34,3 +34,10 @@ type PasswordForm struct {
 type SettingsForm struct {
 	ExcludeMe string `form:"exclude"`
 }
+
+type InstallForm struct {
+	Email     string `form:"email"`
+	Password1 string `form:"password1"`
+	Password2 string `form:"password2"`
+	Offset    string `form:"offset"`
+}

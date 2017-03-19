@@ -7,6 +7,7 @@
             <p class="login-box-msg">Installation - Create admin PicoStats user</p>
 
             <form action="" method="post">
+                <input type="hidden" name="offset" value="" id="offset">
                 <div class="form-group has-feedback">
                     <input type="email" class="form-control" placeholder="Email" name="email" required value="{{ .Form.Email }}" tabindex="1" autofocus>
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
@@ -38,3 +39,7 @@
         <!-- /.login-box-body -->
     </div>
     <!-- /.login-box -->
+
+<script type="text/javascript">
+    document.getElementById('offset').value = new Date().getTimezoneOffset();
+</script>
