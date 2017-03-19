@@ -14,6 +14,7 @@ type User struct {
 	Email       string `sql:"size:255" unique_index`
 	Password    string `sql:"size:255"`
 	Verified    bool   `sql:"not null"`
+	ExcludeMe   bool   `sql:"not null"`
 	MaxWebsites int    `sql`
 }
 
@@ -59,7 +60,13 @@ func (w *Website) countPageViews(older, newer *time.Time) int {
 
 func (w *Website) getPageViews(older, newer *time.Time) []*PageView {
 	var pvs []*PageView
-	db.Order("id").Where("website_id = ? AND created_at BETWEEN ? AND ?", w.ID, older, newer).Find(&pvs)
+	u := &User{}
+	db.First(u, w.OwnerID)
+	if u.ExcludeMe {
+		db.Order("id").Where("signed_in_user_id IS DISTINCT FROM ? AND website_id = ? AND created_at BETWEEN ? AND ?", u.ID, w.ID, older, newer).Find(&pvs)
+	} else {
+		db.Order("id").Where("website_id = ? AND created_at BETWEEN ? AND ?", w.ID, older, newer).Find(&pvs)
+	}
 	return pvs
 }
 
@@ -250,10 +257,11 @@ type Visit struct {
 
 type PageView struct {
 	gorm.Model
-	Visit     *Visit
-	VisitID   uint `sql:"index"`
-	Page      *Page
-	PageID    uint `sql:"index"`
-	Website   *Website
-	WebsiteID uint `sql:"index";default=1`
+	Visit          *Visit
+	VisitID        uint `sql:"index"`
+	Page           *Page
+	PageID         uint `sql:"index"`
+	Website        *Website
+	WebsiteID      uint `sql:"index"`
+	SignedInUserId uint `sql:"index"`
 }

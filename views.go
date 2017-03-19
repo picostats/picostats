@@ -127,14 +127,15 @@ func collectImgView(ctx *iris.Context) {
 	ip := realip.RealIP(ctx.Request)
 
 	pv := &PageViewRequest{
-		WebsiteID:  ctx.URLParam("w"),
-		Path:       ctx.URLParam("p"),
-		Hostname:   ctx.URLParam("h"),
-		Title:      ctx.URLParam("t"),
-		Language:   ctx.URLParam("l"),
-		Resolution: ctx.URLParam("s"),
-		Referrer:   ctx.URLParam("r"),
-		IpAddress:  ip,
+		WebsiteID:      ctx.URLParam("w"),
+		Path:           ctx.URLParam("p"),
+		Hostname:       ctx.URLParam("h"),
+		Title:          ctx.URLParam("t"),
+		Language:       ctx.URLParam("l"),
+		Resolution:     ctx.URLParam("s"),
+		Referrer:       ctx.URLParam("r"),
+		IpAddress:      ip,
+		SignedInUserId: getSignedInUserId(ctx),
 	}
 
 	pvJson, err := json.Marshal(pv)
@@ -424,6 +425,28 @@ func changePasswordPost(ctx *iris.Context) {
 	}
 
 	ctx.Render("account.html", pd)
+}
+
+func saveSettingsPostView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+
+	sf := &SettingsForm{}
+	err := ctx.ReadForm(sf)
+	if err != nil {
+		log.Printf("[views.go] Error reading SettingsForm: %s", err)
+	}
+
+	if sf.ExcludeMe == "on" {
+		pd.User.ExcludeMe = true
+	} else {
+		pd.User.ExcludeMe = false
+	}
+
+	db.Save(pd.User)
+
+	session := ctx.Session()
+	session.SetFlash("success", "Settings successfully saved.")
+	ctx.Redirect(conf.AppUrl + "/account")
 }
 
 func accountDeleteView(ctx *iris.Context) {

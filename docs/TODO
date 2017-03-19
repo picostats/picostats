@@ -2,7 +2,6 @@ TODO
 
 v 1.0 beta
 
-- some settings - remove "start creating..."
 - add tracking code to itself
 - display data - content, browsers, countries
 
@@ -96,3 +95,4 @@ v 1.0 beta
 * fix mobile
 * website - seo
 * website - facebook tags
+* exclude me from tracking when signed in

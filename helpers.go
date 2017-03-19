@@ -41,14 +41,15 @@ type PageData struct {
 }
 
 type PageViewRequest struct {
-	WebsiteID  string `json:"website_id"`
-	Title      string `json:"title,omitempty"`
-	Path       string `json:"path,omitempty"`
-	Hostname   string `json:"hostname,omitempty"`
-	Language   string `json:"language,omitempty"`
-	Resolution string `json:"resolution,omitempty"`
-	Referrer   string `json:"referrer,omitempty"`
-	IpAddress  string `json:"ip_address,omitempty"`
+	WebsiteID      string `json:"website_id"`
+	Title          string `json:"title,omitempty"`
+	Path           string `json:"path,omitempty"`
+	Hostname       string `json:"hostname,omitempty"`
+	Language       string `json:"language,omitempty"`
+	Resolution     string `json:"resolution,omitempty"`
+	Referrer       string `json:"referrer,omitempty"`
+	IpAddress      string `json:"ip_address,omitempty"`
+	SignedInUserId uint   `json:"signed_in_user_id,omitempty"`
 }
 
 type Report struct {

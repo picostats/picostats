@@ -20,7 +20,7 @@ func loginRequired(ctx *iris.Context) {
 			userId := session.Get(USER_ID)
 			if userId.(uint) == conf.DemoLock {
 				forbiddenGet := []string{appPath() + "/account/delete", appPath() + "/websites/delete/", appPath() + "/websites/default/"}
-				forbiddenPost := []string{appPath() + "/websites/new", appPath() + "/websites/", appPath() + "/account"}
+				forbiddenPost := []string{appPath() + "/websites/new", appPath() + "/websites/", appPath() + "/account", appPath() + "/account/settings"}
 				session := ctx.Session()
 
 				user := &User{}
@@ -71,4 +71,14 @@ func isSignedIn(ctx *iris.Context) bool {
 		return u.ID > 0 && u.Verified
 	}
 	return false
+}
+
+func getSignedInUserId(ctx *iris.Context) uint {
+	session := ctx.Session()
+	userId := session.Get(USER_ID)
+	if userId == nil {
+		return uint(0)
+	} else {
+		return userId.(uint)
+	}
 }

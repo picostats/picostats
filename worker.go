@@ -75,9 +75,10 @@ func (w *Worker) handlePageViewRequest(pvr *PageViewRequest) {
 	}
 
 	pvNew := &PageView{
-		VisitID:   vNew.ID,
-		PageID:    page.ID,
-		WebsiteID: website.ID,
+		VisitID:        vNew.ID,
+		PageID:         page.ID,
+		WebsiteID:      website.ID,
+		SignedInUserId: pvr.SignedInUserId,
 	}
 	db.Create(pvNew)
 }

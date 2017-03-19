@@ -30,3 +30,7 @@ type PasswordForm struct {
 	Password2       string `form:"password2"`
 	CurrentPassword string `form:"password"`
 }
+
+type SettingsForm struct {
+	ExcludeMe string `form:"exclude"`
+}
