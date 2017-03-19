@@ -32,7 +32,7 @@ func redirectView(ctx *iris.Context) {
 func installView(ctx *iris.Context) {
 	pd := newPageData(ctx)
 
-	if pd.User.countWebsites() > 0 {
+	if pd.User != nil && pd.User.countWebsites() > 0 {
 		pd.User.redirectToDefaultWebsite(ctx)
 	}
 
