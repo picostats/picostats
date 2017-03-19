@@ -1,8 +1,10 @@
 package main
 
 import (
-	"github.com/jinzhu/gorm"
 	"log"
+	"time"
+
+	"github.com/jinzhu/gorm"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -13,8 +15,13 @@ func initDB() *gorm.DB {
 	log.Printf("[db.go] pg: %s", conf.DBUrl)
 	db, err := gorm.Open(conf.DBType, conf.DBUrl)
 
-	if err != nil {
+	counter := 0
+
+	for err != nil && counter < 60 {
 		log.Printf("[db.go] error: %s", err)
+		time.Sleep(time.Second)
+		db, err = gorm.Open(conf.DBType, conf.DBUrl)
+		counter++
 	}
 
 	db.DB()
