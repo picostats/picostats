@@ -4,13 +4,12 @@ v 1.0 beta
 
 - some settings - remove "start creating..."
 - add tracking code to itself
-- website - facebook tags
-- website - create facebook page
-- website - downloads - binaries
 - display data - content, browsers, countries
 
 v 1.1 beta
 
+- website - downloads - binaries
+- website - create facebook page
 - IPv6 issue
 - check indexes
 - real time stats
@@ -96,3 +95,4 @@ v 1.0 beta
 * add free to website pricing
 * fix mobile
 * website - seo
+* website - facebook tags
