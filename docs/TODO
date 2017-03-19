@@ -2,7 +2,7 @@ TODO
 
 v 1.0 beta
 
-- fix mobile
+- some settings - remove "start creating..."
 - add tracking code to itself
 - website - seo
 - website - facebook tags
@@ -94,3 +94,5 @@ v 1.0 beta
 * limits for saas
 * timezones issue
 * payment and activation
+* add free to website pricing
+* fix mobile
