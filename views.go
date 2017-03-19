@@ -24,6 +24,7 @@ func redirectView(ctx *iris.Context) {
 
 func signInView(ctx *iris.Context) {
 	pd := newPageData(ctx)
+	pd.TitlePrefix = "Sign In | "
 	if isSignedIn(ctx) {
 		pd.User.redirectToDefaultWebsite(ctx)
 	}
@@ -80,6 +81,7 @@ func signOutView(ctx *iris.Context) {
 
 func signUpView(ctx *iris.Context) {
 	pd := newPageData(ctx)
+	pd.TitlePrefix = "Sign Up | "
 	if isSignedIn(ctx) {
 		pd.User.redirectToDefaultWebsite(ctx)
 	}

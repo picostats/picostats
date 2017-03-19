@@ -37,6 +37,7 @@ type PageData struct {
 	DataRangeEndSubract    int
 	DateRangeType          string
 	ChartScale             []string
+	TitlePrefix            string
 }
 
 type PageViewRequest struct {
