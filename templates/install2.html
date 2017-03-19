@@ -1,0 +1,40 @@
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="/"><img src="{{ .Conf.AppUrl }}/public/img/logo.png"></a>
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            <p class="login-box-msg">Installation - Monitor this website</p>
+
+            <form action="{{ .Conf.AppUrl }}/websites/new" method="post">
+                <div class="form-group has-feedback">
+                    <input type="text" class="form-control" placeholder="Website Name" name="name" required value="PicoStats" tabindex="1" autofocus>
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input type="text" class="form-control" placeholder="Website URL" name="url" required value="" tabindex="2" id="url">
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                </div>
+
+                <div class="row">
+                    <!-- /.col -->
+                    <div class="col-xs-6">
+                        <a href="{{ .Conf.AppUrl }}/sign-in" class="btn btn-danger btn-block btn-flat" tabindex="3">Skip</a>
+                    </div>
+                    <!-- /.col -->
+                    <!-- /.col -->
+                    <div class="col-xs-6">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat" tabindex="4">Add Website</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+    <!-- /.login-box -->
+
+<script type="text/javascript">
+    document.getElementById("url").value = document.origin;
+</script>

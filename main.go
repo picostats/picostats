@@ -46,6 +46,8 @@ func main() {
 	// GET view handlers
 	app.Get(appPath(), redirectView)
 	app.Get(appPath()+"/sign-in", signInView)
+	app.Get(appPath()+"/install", installView)
+	app.Get(appPath()+"/install2", installView2)
 	app.Get(appPath()+"/sign-up", signUpView)
 	app.Get(appPath()+"/sign-out", signOutView)
 	app.Get(appPath()+"/account", loginRequired, accountView)
@@ -61,6 +63,7 @@ func main() {
 
 	// POST view handlers
 	app.Post(appPath()+"/sign-in", signInPostView)
+	app.Post(appPath()+"/install", installPostView)
 	app.Post(appPath()+"/sign-up", signUpPostView)
 	app.Post(appPath()+"/websites/new", loginRequired, newWebsitePostView)
 	app.Post(appPath()+"/websites/{id}", loginRequired, editWebsitePostView)

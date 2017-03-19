@@ -18,8 +18,62 @@ func redirectView(ctx *iris.Context) {
 	if isSignedIn(ctx) {
 		pd.User.redirectToDefaultWebsite(ctx)
 	} else {
-		ctx.Redirect("/")
+		var users []*User
+		var cntUsers int
+		db.Find(&users).Count(&cntUsers)
+		if cntUsers == 0 {
+			ctx.Redirect(appPath() + "/install")
+		} else {
+			ctx.Redirect(appPath() + "/sign-in")
+		}
 	}
+}
+
+func installView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+
+	if pd.User.countWebsites() > 0 {
+		pd.User.redirectToDefaultWebsite(ctx)
+	}
+
+	pd.TitlePrefix = "Install | "
+	pd.Form = SignUpForm{}
+	ctx.Render("install.html", pd, iris.RenderOptions{"layout": "layout2.html"})
+}
+
+func installPostView(ctx *iris.Context) {
+	pd := newPageData(ctx)
+
+	suf := &SignUpForm{}
+	err := ctx.ReadForm(suf)
+	if err != nil {
+		log.Printf("[views.go] Error reading SignUpForm: %s", err)
+	}
+
+	if suf.Password1 == suf.Password2 {
+		user := &User{Email: suf.Email, Password: getMD5Hash(suf.Password1), MaxWebsites: conf.MaxWebsites, Verified: true}
+		db.Create(user)
+		signIn(ctx, user)
+		ctx.Redirect(conf.AppUrl + "/install2")
+	} else {
+		err := errors.New("Passwords don't match, please try again.")
+		pd.Errors = append(pd.Errors, &err)
+	}
+
+	pd.Form = &suf
+
+	ctx.Render("install.html", pd, iris.RenderOptions{"layout": "layout2.html"})
+}
+
+func installView2(ctx *iris.Context) {
+	pd := newPageData(ctx)
+
+	if pd.User.countWebsites() > 0 {
+		pd.User.redirectToDefaultWebsite(ctx)
+	}
+
+	pd.TitlePrefix = "Install | "
+	ctx.Render("install2.html", pd, iris.RenderOptions{"layout": "layout2.html"})
 }
 
 func signInView(ctx *iris.Context) {

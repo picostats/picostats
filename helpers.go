@@ -252,5 +252,8 @@ func appPath() string {
 	if err != nil {
 		log.Printf("[helpers.go] Error parsing URL: %s", err)
 	}
+	if u.Path == "/" {
+		u.Path = ""
+	}
 	return u.Path
 }
