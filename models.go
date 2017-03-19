@@ -52,15 +52,14 @@ type Website struct {
 }
 
 func (w *Website) countPageViews(older, newer *time.Time) int {
-	count := 0
-	visits := w.getVisits(older, newer)
-	for _, v := range visits {
-		var cnt int
-		var pvs []*PageView
-		db.Where(&PageView{VisitID: v.ID}).Find(&pvs).Count(&cnt)
-		count += cnt
-	}
-	return count
+	pvs := w.getPageViews(older, newer)
+	return len(pvs)
+}
+
+func (w *Website) getPageViews(older, newer *time.Time) []*PageView {
+	var pvs []*PageView
+	db.Order("id").Where("website_id = ? AND created_at BETWEEN ? AND ?", w.ID, older, newer).Find(&pvs)
+	return pvs
 }
 
 func (w *Website) countVisitors(older, newer *time.Time) int {
@@ -109,8 +108,13 @@ func (w *Website) countReturning(older, newer *time.Time) int {
 
 func (w *Website) getDataPoints(numDays, limit int, ctx *iris.Context) []int {
 	var dataPoints []int
+	limitStart := limit
 	for ; limit > 0; limit-- {
-		dataPoints = append(dataPoints, w.countVisits(getTimeDaysAgo(numDays, ctx), getTimeDaysAgo(numDays-1, ctx)))
+		if limitStart == limit {
+			dataPoints = append(dataPoints, w.countVisits(getTimeDaysAgo(numDays, ctx), getTimeDaysAgo(numDays-1, ctx)))
+		} else {
+			dataPoints = append(dataPoints, w.countVisitsPrecise(getTimeDaysAgo(numDays, ctx), getTimeDaysAgo(numDays-1, ctx)))
+		}
 		numDays--
 	}
 	return dataPoints
@@ -122,19 +126,44 @@ func (w *Website) getDataPointsHourly(numDays int, ctx *iris.Context) []int {
 	for i := 0; i < 24; i++ {
 		older := start.Add(time.Duration(i) * time.Hour)
 		newer := start.Add(time.Duration(i+1) * time.Hour).Add(-time.Second)
-		dataPoints = append(dataPoints, w.countVisits(&older, &newer))
+		if i == 0 {
+			dataPoints = append(dataPoints, w.countVisits(&older, &newer))
+		} else {
+			dataPoints = append(dataPoints, w.countVisitsPrecise(&older, &newer))
+		}
 	}
 	return dataPoints
 }
 
-func (w *Website) getVisits(older, newer *time.Time) []*Visit {
+func (w *Website) getVisitsPrecise(older, newer *time.Time) []*Visit {
 	var visits []*Visit
 	db.Order("id").Where("website_id = ? AND created_at BETWEEN ? AND ?", w.ID, older, newer).Find(&visits)
 	return visits
 }
 
+func (w *Website) getVisits(older, newer *time.Time) []*Visit {
+	var visits []*Visit
+	visitsTemp := make(map[uint]*Visit)
+	pvs := w.getPageViews(older, newer)
+	for _, pv := range pvs {
+		_, ok := visitsTemp[pv.VisitID]
+		if !ok {
+			v := &Visit{}
+			db.First(v, pv.VisitID)
+			visits = append(visits, v)
+			visitsTemp[pv.VisitID] = v
+		}
+	}
+	return visits
+}
+
 func (w *Website) countVisits(older, newer *time.Time) int {
 	visits := w.getVisits(older, newer)
+	return len(visits)
+}
+
+func (w *Website) countVisitsPrecise(older, newer *time.Time) int {
+	visits := w.getVisitsPrecise(older, newer)
 	return len(visits)
 }
 
@@ -220,8 +249,10 @@ type Visit struct {
 
 type PageView struct {
 	gorm.Model
-	Visit   *Visit
-	VisitID uint `sql:"index"`
-	Page    *Page
-	PageID  uint `sql:"index"`
+	Visit     *Visit
+	VisitID   uint `sql:"index"`
+	Page      *Page
+	PageID    uint `sql:"index"`
+	Website   *Website
+	WebsiteID uint `sql:"index";default=1`
 }

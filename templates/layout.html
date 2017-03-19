@@ -151,7 +151,11 @@
     <script>
         (function(d, w, t, o){w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};
         a=d.createElement('script'),m=d.getElementsByTagName('script')[0];a.async=1;a.src=t;
+{{ if .Conf.Dev }}
         m.parentNode.insertBefore(a,m)})(document, window, '/app/public/tracker_dev.js', 'ps');
+{{ else }}
+        m.parentNode.insertBefore(a,m)})(document, window, '/app/public/tracker.js', 'ps');
+{{ end }}
 
         ps('create', 'c4ca4238a0b923820dcc509a6f75849b');
         ps('pageview');
