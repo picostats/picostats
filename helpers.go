@@ -84,7 +84,15 @@ func newPageData(ctx *iris.Context) *PageData {
 		}
 		var websites []*Website
 		db.Order("id").Where("owner_id = ?", pd.User.ID).Find(&websites)
-		pd.Websites = websites
+		if pd.User.countWebsites() >= pd.User.MaxWebsites && pd.User.MaxWebsites != 0 {
+			for _, w := range websites {
+				if w.Default {
+					pd.Websites = []*Website{w}
+				}
+			}
+		} else {
+			pd.Websites = websites
+		}
 	}
 	session := ctx.Session()
 	sFl := session.GetFlash("success")

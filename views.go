@@ -101,7 +101,7 @@ func signUpPostView(ctx *iris.Context) {
 
 	if user.ID == 0 {
 		if suf.Password1 == suf.Password2 {
-			user := &User{Email: suf.Email, Password: getMD5Hash(suf.Password1)}
+			user := &User{Email: suf.Email, Password: getMD5Hash(suf.Password1), MaxWebsites: conf.MaxWebsites}
 			db.Create(user)
 			verificationLink := conf.AppUrl + "/verify/" + aesEncrypt(strconv.Itoa(int(user.ID)))
 			sendVerificationEmail(user.Email, verificationLink)
@@ -155,9 +155,9 @@ func accountView(ctx *iris.Context) {
 func newWebsiteView(ctx *iris.Context) {
 	pd := newPageData(ctx)
 
-	if pd.User.countWebsites() == conf.MaxWebsites {
+	if pd.User.countWebsites() >= pd.User.MaxWebsites && pd.User.MaxWebsites != 0 {
 		session := ctx.Session()
-		session.SetFlash("error", "You've reached maximum number of websites. If you need more, please <a href=\"https://www.picostats.com/pricing\"><strong>purchase</strong></a> PicoStats Premium or install PicoStats on your own server.")
+		session.SetFlash("error", "You've reached maximum number of websites. If you need more, please <a href=\"https://www.picostats.com/pricing/"+strconv.Itoa(int(pd.User.ID))+"\"><strong>purchase</strong></a> PicoStats Premium or install PicoStats on your own server.")
 		pd.User.redirectToDefaultWebsite(ctx)
 		return
 	}
@@ -199,16 +199,22 @@ func editWebsiteView(ctx *iris.Context) {
 	db.First(w, wId)
 
 	if w.OwnerID == pd.User.ID {
-		wf := &WebsiteForm{
-			Id:      w.ID,
-			Name:    w.Name,
-			Url:     w.Url,
-			Default: w.Default,
+		if pd.User.MaxWebsites == 0 || w.Default {
+			wf := &WebsiteForm{
+				Id:      w.ID,
+				Name:    w.Name,
+				Url:     w.Url,
+				Default: w.Default,
+			}
+			pd.Form = wf
+			pd.WebsiteId = w.TrackingCode
+			pd.TrackerUrl = strings.Replace(strings.Replace(conf.AppUrl, "https://", "//", -1), "http://", "//", -1) + "/public/tracker.js"
+			ctx.Render("websites-edit.html", pd)
+		} else {
+			session := ctx.Session()
+			session.SetFlash("error", "You can't access this website when your PicoStats Premium account is inactive.")
+			pd.User.redirectToDefaultWebsite(ctx)
 		}
-		pd.Form = wf
-		pd.WebsiteId = w.TrackingCode
-		pd.TrackerUrl = strings.Replace(strings.Replace(conf.AppUrl, "https://", "//", -1), "http://", "//", -1) + "/public/tracker.js"
-		ctx.Render("websites-edit.html", pd)
 	} else {
 		session := ctx.Session()
 		session.SetFlash("error", "You are not the owner of this website.")
@@ -275,72 +281,78 @@ func websiteView(ctx *iris.Context) {
 	db.First(w, wId)
 
 	if w.OwnerID == pd.User.ID {
-		pd.Form = w
+		if pd.User.MaxWebsites == 0 || w.Default {
+			pd.Form = w
 
-		session := ctx.Session()
-		startStr := session.GetString("date-range-start")
-		endStr := session.GetString("date-range-end")
+			session := ctx.Session()
+			startStr := session.GetString("date-range-start")
+			endStr := session.GetString("date-range-end")
 
-		if len(startStr) == 0 {
-			t := getTimeDaysAgo(7, ctx)
-			startStr = strconv.Itoa(int(t.Unix()))
-		}
-		if len(endStr) == 0 {
-			t := getTimeDaysAgo(0, ctx)
-			endStr = strconv.Itoa(int(t.Unix()))
-		}
+			if len(startStr) == 0 {
+				t := getTimeDaysAgo(7, ctx)
+				startStr = strconv.Itoa(int(t.Unix()))
+			}
+			if len(endStr) == 0 {
+				t := getTimeDaysAgo(0, ctx)
+				endStr = strconv.Itoa(int(t.Unix()))
+			}
 
-		startInt, err := strconv.ParseInt(startStr, 10, 64)
-		if err != nil {
-			log.Printf("[views.go] Error parsing timestamp: %s", err)
-		}
-		start := time.Unix(startInt, 0)
+			startInt, err := strconv.ParseInt(startStr, 10, 64)
+			if err != nil {
+				log.Printf("[views.go] Error parsing timestamp: %s", err)
+			}
+			start := time.Unix(startInt, 0)
 
-		endInt, err := strconv.ParseInt(endStr, 10, 64)
-		if err != nil {
-			log.Printf("[views.go] Error parsing timestamp: %s", err)
-		}
-		end := time.Unix(endInt, 0)
+			endInt, err := strconv.ParseInt(endStr, 10, 64)
+			if err != nil {
+				log.Printf("[views.go] Error parsing timestamp: %s", err)
+			}
+			end := time.Unix(endInt, 0)
 
-		pd.DataRangeStartSubtract = int(time.Since(start).Hours() / 24)
-		if time.Since(end).Hours() > 0 {
-			pd.DataRangeEndSubract = int(time.Since(end).Hours()/24) + 1
+			pd.DataRangeStartSubtract = int(time.Since(start).Hours() / 24)
+			if time.Since(end).Hours() > 0 {
+				pd.DataRangeEndSubract = int(time.Since(end).Hours()/24) + 1
+			} else {
+				pd.DataRangeEndSubract = 0
+			}
+
+			pd.DateRangeType = getDateRangeType(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
+			pd.ChartScale = getChartScale(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
+
+			var dataPoints []int
+			var dataPointsPast []int
+
+			if (pd.DataRangeStartSubtract == 0 && pd.DataRangeEndSubract == 0) || (pd.DataRangeStartSubtract == 1 && pd.DataRangeEndSubract == 1) {
+				dataPoints = w.getDataPointsHourly(pd.DataRangeStartSubtract, ctx)
+				dataPointsPast = w.getDataPointsHourly(pd.DataRangeStartSubtract+1, ctx)
+			} else {
+				dataPoints = w.getDataPoints(pd.DataRangeStartSubtract+1, pd.DataRangeStartSubtract+1, ctx)
+				dataPointsPast = w.getDataPoints((pd.DataRangeStartSubtract+1)*2, pd.DataRangeStartSubtract+1, ctx)
+			}
+
+			pd.Report = &Report{
+				PageViews:         w.countPageViews(&start, &end),
+				Visitors:          w.countVisitors(&start, &end),
+				Visits:            w.countVisits(&start, &end),
+				New:               w.countNew(&start, &end),
+				Returning:         w.countReturning(&start, &end),
+				DataPoints:        dataPoints,
+				DataPointsPast:    dataPointsPast,
+				BounceRate:        fmt.Sprintf("%.2f", w.getBounceRate(&start, &end)),
+				TimePerVisit:      w.getTimePerVisit(&start, &end),
+				TimeTotal:         w.getTimeAllVisits(&start, &end),
+				PageViewsPerVisit: w.getPageViewsPerVisit(&start, &end),
+			}
+
+			pd.Report.NewPercentage = fmt.Sprintf("%.2f", float64(pd.Report.New)/float64(pd.Report.New+pd.Report.Returning)*100)
+			pd.Report.ReturningPercentage = fmt.Sprintf("%.2f", float64(pd.Report.Returning)/float64(pd.Report.New+pd.Report.Returning)*100)
+
+			ctx.Render("website.html", pd)
 		} else {
-			pd.DataRangeEndSubract = 0
+			session := ctx.Session()
+			session.SetFlash("error", "You can't access this website when your PicoStats Premium account is inactive.")
+			pd.User.redirectToDefaultWebsite(ctx)
 		}
-
-		pd.DateRangeType = getDateRangeType(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
-		pd.ChartScale = getChartScale(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
-
-		var dataPoints []int
-		var dataPointsPast []int
-
-		if (pd.DataRangeStartSubtract == 0 && pd.DataRangeEndSubract == 0) || (pd.DataRangeStartSubtract == 1 && pd.DataRangeEndSubract == 1) {
-			dataPoints = w.getDataPointsHourly(pd.DataRangeStartSubtract, ctx)
-			dataPointsPast = w.getDataPointsHourly(pd.DataRangeStartSubtract+1, ctx)
-		} else {
-			dataPoints = w.getDataPoints(pd.DataRangeStartSubtract+1, pd.DataRangeStartSubtract+1, ctx)
-			dataPointsPast = w.getDataPoints((pd.DataRangeStartSubtract+1)*2, pd.DataRangeStartSubtract+1, ctx)
-		}
-
-		pd.Report = &Report{
-			PageViews:         w.countPageViews(&start, &end),
-			Visitors:          w.countVisitors(&start, &end),
-			Visits:            w.countVisits(&start, &end),
-			New:               w.countNew(&start, &end),
-			Returning:         w.countReturning(&start, &end),
-			DataPoints:        dataPoints,
-			DataPointsPast:    dataPointsPast,
-			BounceRate:        fmt.Sprintf("%.2f", w.getBounceRate(&start, &end)),
-			TimePerVisit:      w.getTimePerVisit(&start, &end),
-			TimeTotal:         w.getTimeAllVisits(&start, &end),
-			PageViewsPerVisit: w.getPageViewsPerVisit(&start, &end),
-		}
-
-		pd.Report.NewPercentage = fmt.Sprintf("%.2f", float64(pd.Report.New)/float64(pd.Report.New+pd.Report.Returning)*100)
-		pd.Report.ReturningPercentage = fmt.Sprintf("%.2f", float64(pd.Report.Returning)/float64(pd.Report.New+pd.Report.Returning)*100)
-
-		ctx.Render("website.html", pd)
 	} else {
 		session := ctx.Session()
 		session.SetFlash("error", "You are not the owner of this website.")

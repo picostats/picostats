@@ -2,14 +2,13 @@ TODO
 
 v 1.0 beta
 
+- fix mobile
 - add tracking code to itself
-- payment and activation
-- display data - content, browsers, countries
-
 - website - seo
 - website - facebook tags
 - website - create facebook page
 - website - downloads - binaries
+- display data - content, browsers, countries
 
 v 1.1 beta
 
@@ -94,3 +93,4 @@ v 1.0 beta
 * change the way tracking code gets generated (we don't need aes anymore)
 * limits for saas
 * timezones issue
+* payment and activation
