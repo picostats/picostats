@@ -23,11 +23,14 @@ func loginRequired(ctx *iris.Context) {
 				forbiddenPost := []string{appPath() + "/websites/new", appPath() + "/websites/", appPath() + "/account"}
 				session := ctx.Session()
 
+				user := &User{}
+				db.First(user, userId.(uint))
+
 				if ctx.Request.Method == "GET" {
 					for _, fg := range forbiddenGet {
 						if strings.HasPrefix(ctx.Request.URL.String(), fg) {
 							session.SetFlash("error", "This is a demo account and you are not allowed to do that action.")
-							ctx.Redirect(appPath())
+							user.redirectToDefaultWebsite(ctx)
 						}
 					}
 				}
@@ -36,7 +39,7 @@ func loginRequired(ctx *iris.Context) {
 					for _, fp := range forbiddenPost {
 						if strings.HasPrefix(ctx.Request.URL.String(), fp) || ctx.Request.URL.String() == fp {
 							session.SetFlash("error", "This is a demo account and you are not allowed to do that action.")
-							ctx.Redirect(appPath())
+							user.redirectToDefaultWebsite(ctx)
 						}
 					}
 				}

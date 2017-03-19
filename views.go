@@ -16,12 +16,6 @@ import (
 func redirectView(ctx *iris.Context) {
 	pd := newPageData(ctx)
 	if isSignedIn(ctx) {
-		if pd.ErrorFlash != nil {
-			ctx.Session().SetFlash("error", pd.ErrorFlash)
-		}
-		if pd.SuccessFlash != nil {
-			ctx.Session().SetFlash("success", pd.SuccessFlash)
-		}
 		pd.User.redirectToDefaultWebsite(ctx)
 	} else {
 		ctx.Redirect("/")
@@ -45,6 +39,9 @@ func signInPostView(ctx *iris.Context) {
 	if err != nil {
 		log.Printf("[views.go] Error reading SignInForm: %s", err)
 	}
+
+	session := ctx.Session()
+	session.Set("offset", sif.Offset)
 
 	user := &User{}
 	db.Where("email = ?", sif.Email).First(user)
@@ -285,11 +282,11 @@ func websiteView(ctx *iris.Context) {
 		endStr := session.GetString("date-range-end")
 
 		if len(startStr) == 0 {
-			t := getTimeDaysAgo(7)
+			t := getTimeDaysAgo(7, ctx)
 			startStr = strconv.Itoa(int(t.Unix()))
 		}
 		if len(endStr) == 0 {
-			t := getTimeDaysAgo(0)
+			t := getTimeDaysAgo(0, ctx)
 			endStr = strconv.Itoa(int(t.Unix()))
 		}
 
@@ -319,11 +316,11 @@ func websiteView(ctx *iris.Context) {
 		var dataPointsPast []int
 
 		if (pd.DataRangeStartSubtract == 0 && pd.DataRangeEndSubract == 0) || (pd.DataRangeStartSubtract == 1 && pd.DataRangeEndSubract == 1) {
-			dataPoints = w.getDataPointsHourly(pd.DataRangeStartSubtract)
-			dataPointsPast = w.getDataPointsHourly(pd.DataRangeStartSubtract + 1)
+			dataPoints = w.getDataPointsHourly(pd.DataRangeStartSubtract, ctx)
+			dataPointsPast = w.getDataPointsHourly(pd.DataRangeStartSubtract+1, ctx)
 		} else {
-			dataPoints = w.getDataPoints(pd.DataRangeStartSubtract+1, pd.DataRangeStartSubtract+1)
-			dataPointsPast = w.getDataPoints((pd.DataRangeStartSubtract+1)*2, pd.DataRangeStartSubtract+1)
+			dataPoints = w.getDataPoints(pd.DataRangeStartSubtract+1, pd.DataRangeStartSubtract+1, ctx)
+			dataPointsPast = w.getDataPoints((pd.DataRangeStartSubtract+1)*2, pd.DataRangeStartSubtract+1, ctx)
 		}
 
 		pd.Report = &Report{
@@ -339,21 +336,10 @@ func websiteView(ctx *iris.Context) {
 			TimeTotal:         w.getTimeAllVisits(&start, &end),
 			PageViewsPerVisit: w.getPageViewsPerVisit(&start, &end),
 		}
-		pd.Report = &Report{
-			PageViews:         w.countPageViews(&start, &end),
-			Visitors:          w.countVisitors(&start, &end),
-			Visits:            w.countVisits(&start, &end),
-			New:               w.countNew(&start, &end),
-			Returning:         w.countReturning(&start, &end),
-			DataPoints:        dataPoints,
-			DataPointsPast:    dataPointsPast,
-			BounceRate:        fmt.Sprintf("%.2f", w.getBounceRate(&start, &end)),
-			TimePerVisit:      w.getTimePerVisit(&start, &end),
-			TimeTotal:         w.getTimeAllVisits(&start, &end),
-			PageViewsPerVisit: w.getPageViewsPerVisit(&start, &end),
-		}
+
 		pd.Report.NewPercentage = fmt.Sprintf("%.2f", float64(pd.Report.New)/float64(pd.Report.New+pd.Report.Returning)*100)
 		pd.Report.ReturningPercentage = fmt.Sprintf("%.2f", float64(pd.Report.Returning)/float64(pd.Report.New+pd.Report.Returning)*100)
+
 		ctx.Render("website.html", pd)
 	} else {
 		session := ctx.Session()
@@ -366,6 +352,7 @@ func changeDateRangeView(ctx *iris.Context) {
 	wId := ctx.Param("id")
 
 	drf := &DateRangeForm{}
+	// log.Println(drf.Offset)
 	err := ctx.ReadForm(drf)
 	if err != nil {
 		log.Printf("[views.go] Error reading DateRangeForm: %s", err)

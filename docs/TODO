@@ -4,7 +4,6 @@ v 1.0 beta
 
 - add tracking code to itself
 - payment and activation
-- timezones issue
 - display data - content, browsers, countries
 
 - website - seo
@@ -94,3 +93,4 @@ v 1.0 beta
 * sign in - next
 * change the way tracking code gets generated (we don't need aes anymore)
 * limits for saas
+* timezones issue

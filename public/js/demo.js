@@ -376,7 +376,6 @@ if (typeof __draw_linechart !== 'undefined') {
     //Create pie or douhnut chart
     // You can switch between pie and douhnut using the method below.
     pieChart.Doughnut(PieData, pieOptions);
-// alert(dataRangeEndSubtract);
     $('#daterange-btn').daterangepicker(
         {
             ranges: {
@@ -394,8 +393,8 @@ if (typeof __draw_linechart !== 'undefined') {
         },
         function (start, end) {
             $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            $('#start').val(start / 1000 | 0);
-            $('#end').val(end / 1000 | 0);
+            $('#start').val((start / 1000 | 0));
+            $('#end').val((end / 1000 | 0));
             $('#dateRangeForm').submit();
         }
     );

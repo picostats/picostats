@@ -4,6 +4,7 @@ type SignInForm struct {
 	Email    string `form:"email"`
 	Password string `form:"password"`
 	Next     string `form:"next"`
+	Offset   string `form:"offset"`
 }
 
 type SignUpForm struct {

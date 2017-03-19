@@ -107,18 +107,18 @@ func (w *Website) countReturning(older, newer *time.Time) int {
 	return visits - newCount
 }
 
-func (w *Website) getDataPoints(numDays, limit int) []int {
+func (w *Website) getDataPoints(numDays, limit int, ctx *iris.Context) []int {
 	var dataPoints []int
 	for ; limit > 0; limit-- {
-		dataPoints = append(dataPoints, w.countVisits(getTimeDaysAgo(numDays), getTimeDaysAgo(numDays-1)))
+		dataPoints = append(dataPoints, w.countVisits(getTimeDaysAgo(numDays, ctx), getTimeDaysAgo(numDays-1, ctx)))
 		numDays--
 	}
 	return dataPoints
 }
 
-func (w *Website) getDataPointsHourly(numDays int) []int {
+func (w *Website) getDataPointsHourly(numDays int, ctx *iris.Context) []int {
 	var dataPoints []int
-	start := getTimeDaysAgo(numDays + 1)
+	start := getTimeDaysAgo(numDays+1, ctx)
 	for i := 0; i < 24; i++ {
 		older := start.Add(time.Duration(i) * time.Hour)
 		newer := start.Add(time.Duration(i+1) * time.Hour).Add(-time.Second)
