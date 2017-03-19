@@ -194,7 +194,7 @@ func getTimeDaysAgo(numDays int, ctx *iris.Context) *time.Time {
 	if err != nil {
 		log.Printf("[helpers.go] Error parsing offset: %s", err)
 	}
-	timeAgo := now.Truncate(time.Hour).Add(-time.Hour*time.Duration(now.Hour())).AddDate(0, 0, -numDays)
+	timeAgo := now.Truncate(time.Hour).Add(-time.Hour*time.Duration(now.Hour())).Add(time.Minute*time.Duration(offsetInt)).AddDate(0, 0, -numDays)
 	log.Println(timeAgo)
 	return &timeAgo
 }
