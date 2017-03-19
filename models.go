@@ -131,7 +131,7 @@ func (w *Website) getDataPoints(numDays, limit int, ctx *iris.Context) []int {
 
 func (w *Website) getDataPointsHourly(numDays int, ctx *iris.Context) []int {
 	var dataPoints []int
-	start := getTimeDaysAgo(numDays+1, ctx)
+	start := getTimeDaysAgo(numDays, ctx)
 	log.Println(start)
 	for i := 0; i < 24; i++ {
 		older := start.Add(time.Duration(i) * time.Hour)
