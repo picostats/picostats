@@ -268,7 +268,11 @@ func editWebsiteView(ctx *iris.Context) {
 			}
 			pd.Form = wf
 			pd.WebsiteId = w.TrackingCode
-			pd.TrackerUrl = strings.Replace(strings.Replace(conf.AppUrl, "https://", "//", -1), "http://", "//", -1) + "/public/tracker.js"
+			if strings.Contains(conf.AppUrl, ctx.Request.Host) {
+				pd.TrackerUrl = strings.Replace(strings.Replace(conf.AppUrl, "https://", "//", -1), "http://", "//", -1) + "/public/tracker.js"
+			} else {
+				pd.TrackerUrl = "//" + ctx.Request.Host + appPath() + "/public/tracker.js"
+			}
 			ctx.Render("websites-edit.html", pd)
 		} else {
 			session := ctx.Session()
