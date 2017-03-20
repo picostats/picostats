@@ -352,6 +352,12 @@ func websiteView(ctx *iris.Context) {
 			startStr := session.GetString("date-range-start")
 			endStr := session.GetString("date-range-end")
 
+			// offset := session.Get("offset")
+			// offsetInt, err := strconv.Atoi(offset.(string))
+			// if err != nil {
+			// 	log.Printf("[views.go] Error parsing offset: %s", err)
+			// }
+
 			if len(startStr) == 0 {
 				t := getTimeDaysAgo(7, ctx)
 				startStr = strconv.Itoa(int(t.Unix()))
@@ -373,6 +379,9 @@ func websiteView(ctx *iris.Context) {
 			}
 			end := time.Unix(endInt, 0)
 
+			log.Println(start)
+			log.Println(end)
+
 			pd.DataRangeStartSubtract = int(time.Since(start).Hours() / 24)
 			if time.Since(end).Hours() > 0 {
 				pd.DataRangeEndSubract = int(time.Since(end).Hours()/24) + 1
@@ -383,12 +392,15 @@ func websiteView(ctx *iris.Context) {
 			pd.DateRangeType = getDateRangeType(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
 			pd.ChartScale = getChartScale(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
 
+			log.Println(pd.DataRangeStartSubtract)
+			log.Println(pd.DataRangeEndSubract)
+
 			var dataPoints []int
 			var dataPointsPast []int
 
 			if (pd.DataRangeStartSubtract == 0 && pd.DataRangeEndSubract == 0) || (pd.DataRangeStartSubtract == 1 && pd.DataRangeEndSubract == 1) {
-				dataPoints = w.getDataPointsHourly(pd.DataRangeStartSubtract, ctx)
-				dataPointsPast = w.getDataPointsHourly(pd.DataRangeStartSubtract+1, ctx)
+				dataPoints = w.getDataPointsHourly(pd.DataRangeStartSubtract+1, ctx)
+				dataPointsPast = w.getDataPointsHourly(pd.DataRangeStartSubtract+2, ctx)
 			} else {
 				dataPoints = w.getDataPoints(pd.DataRangeStartSubtract+1, pd.DataRangeStartSubtract+1, ctx)
 				dataPointsPast = w.getDataPoints((pd.DataRangeStartSubtract+1)*2, pd.DataRangeStartSubtract+1, ctx)
