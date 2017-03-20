@@ -2,11 +2,7 @@ TODO
 
 v 1.0 beta
 
-- add tracking code to itself
-- finish docker image
-- finish open source version
 - installation instructions
-
 - display data - content, browsers, countries
 
 v 1.1 beta
@@ -100,3 +96,6 @@ v 1.0 beta
 * website - seo
 * website - facebook tags
 * exclude me from tracking when signed in 
+* add tracking code to itself
+* finish docker image
+* finish open source version
