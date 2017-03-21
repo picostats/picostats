@@ -3,11 +3,9 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/tomasen/realip"
 	"gopkg.in/kataras/iris.v6"
@@ -347,82 +345,7 @@ func websiteView(ctx *iris.Context) {
 	if w.OwnerID == pd.User.ID {
 		if pd.User.MaxWebsites == 0 || w.Default {
 			pd.Form = w
-
-			session := ctx.Session()
-			startStr := session.GetString("date-range-start")
-			endStr := session.GetString("date-range-end")
-
-			// offset := session.Get("offset")
-			// offsetInt, err := strconv.Atoi(offset.(string))
-			// if err != nil {
-			// 	log.Printf("[views.go] Error parsing offset: %s", err)
-			// }
-
-			if len(startStr) == 0 {
-				t := getTimeDaysAgo(7, ctx)
-				startStr = strconv.Itoa(int(t.Unix()))
-			}
-			if len(endStr) == 0 {
-				t := getTimeDaysAgo(0, ctx)
-				endStr = strconv.Itoa(int(t.Unix()))
-			}
-
-			startInt, err := strconv.ParseInt(startStr, 10, 64)
-			if err != nil {
-				log.Printf("[views.go] Error parsing timestamp: %s", err)
-			}
-			start := time.Unix(startInt, 0)
-
-			endInt, err := strconv.ParseInt(endStr, 10, 64)
-			if err != nil {
-				log.Printf("[views.go] Error parsing timestamp: %s", err)
-			}
-			end := time.Unix(endInt, 0)
-
-			log.Println(start)
-			log.Println(end)
-
-			pd.DataRangeStartSubtract = int(time.Since(start).Hours() / 24)
-			if time.Since(end).Hours() > 0 {
-				pd.DataRangeEndSubract = int(time.Since(end).Hours()/24) + 1
-			} else {
-				pd.DataRangeEndSubract = 0
-			}
-
-			pd.DateRangeType = getDateRangeType(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
-			pd.ChartScale = getChartScale(pd.DataRangeStartSubtract, pd.DataRangeEndSubract)
-
-			log.Println(pd.DataRangeStartSubtract)
-			log.Println(pd.DataRangeEndSubract)
-
-			var dataPoints []int
-			var dataPointsPast []int
-
-			if (pd.DataRangeStartSubtract == 0 && pd.DataRangeEndSubract == 0) || (pd.DataRangeStartSubtract == 1 && pd.DataRangeEndSubract == 1) {
-				dataPoints = w.getDataPointsHourly(pd.DataRangeStartSubtract+1, ctx)
-				dataPointsPast = w.getDataPointsHourly(pd.DataRangeStartSubtract+2, ctx)
-			} else {
-				dataPoints = w.getDataPoints(pd.DataRangeStartSubtract+1, pd.DataRangeStartSubtract+1, ctx)
-				dataPointsPast = w.getDataPoints((pd.DataRangeStartSubtract+1)*2, pd.DataRangeStartSubtract+1, ctx)
-			}
-
-			pd.Report = &Report{
-				PageViews:         w.countPageViews(&start, &end),
-				Visitors:          w.countVisitors(&start, &end),
-				Visits:            w.countVisits(&start, &end),
-				New:               w.countNew(&start, &end),
-				Returning:         w.countReturning(&start, &end),
-				DataPoints:        dataPoints,
-				DataPointsPast:    dataPointsPast,
-				BounceRate:        fmt.Sprintf("%.2f", w.getBounceRate(&start, &end)),
-				TimePerVisit:      w.getTimePerVisit(&start, &end),
-				TimeTotal:         w.getTimeAllVisits(&start, &end),
-				PageViewsPerVisit: w.getPageViewsPerVisit(&start, &end),
-			}
-
-			pd.Report.NewPercentage = fmt.Sprintf("%.2f", float64(pd.Report.New)/float64(pd.Report.New+pd.Report.Returning)*100)
-			pd.Report.ReturningPercentage = fmt.Sprintf("%.2f", float64(pd.Report.Returning)/float64(pd.Report.New+pd.Report.Returning)*100)
-
+			pd.Report = rm.generateReport(ctx, w)
 			ctx.Render("website.html", pd)
 		} else {
 			session := ctx.Session()

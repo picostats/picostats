@@ -12,6 +12,7 @@ import (
 	"html/template"
 	"io"
 	"log"
+	"math"
 	"net/url"
 	"os"
 	"strconv"
@@ -22,22 +23,18 @@ import (
 )
 
 type PageData struct {
-	User                   *User
-	Websites               []*Website
-	Conf                   *Config
-	Errors                 []*error
-	Form                   interface{}
-	Gravatar               string
-	WebsiteId              string
-	TrackerUrl             string
-	SuccessFlash           interface{}
-	ErrorFlash             interface{}
-	Report                 *Report
-	DataRangeStartSubtract int
-	DataRangeEndSubract    int
-	DateRangeType          string
-	ChartScale             []string
-	TitlePrefix            string
+	User         *User
+	Websites     []*Website
+	Conf         *Config
+	Errors       []*error
+	Form         interface{}
+	Gravatar     string
+	WebsiteId    string
+	TrackerUrl   string
+	SuccessFlash interface{}
+	ErrorFlash   interface{}
+	Report       *Report
+	TitlePrefix  string
 }
 
 type PageViewRequest struct {
@@ -50,22 +47,6 @@ type PageViewRequest struct {
 	Referrer       string `json:"referrer,omitempty"`
 	IpAddress      string `json:"ip_address,omitempty"`
 	SignedInUserId uint   `json:"signed_in_user_id,omitempty"`
-}
-
-type Report struct {
-	Visits              int
-	Visitors            int
-	PageViews           int
-	BounceRate          string
-	New                 int
-	Returning           int
-	DataPoints          []int
-	DataPointsPast      []int
-	TimePerVisit        string
-	TimeTotal           string
-	PageViewsPerVisit   string
-	NewPercentage       string
-	ReturningPercentage string
 }
 
 func newPageData(ctx *iris.Context) *PageData {
@@ -196,57 +177,6 @@ func getTimeDaysAgo(numDays int, ctx *iris.Context) *time.Time {
 	return &timeAgo
 }
 
-func getDateRangeType(startSubtract, endSubract int) string {
-	dateRangeType := "Date Range"
-	if startSubtract == 0 && endSubract == 0 {
-		dateRangeType = "Today"
-	} else if startSubtract == 1 && endSubract == 1 {
-		dateRangeType = "Yesterday"
-	} else if startSubtract == 6 && endSubract == 0 {
-		dateRangeType = "Last 7 Days"
-	} else if startSubtract == 29 && endSubract == 0 {
-		dateRangeType = "Last 30 Days"
-	} else if endSubract == 0 {
-		dateRangeType = "This Month"
-	} else {
-		dateRangeType = "Last Month"
-	}
-	return dateRangeType
-}
-
-func getChartScale(startSubtract, endSubract int) []string {
-	chartScale := []string{}
-	if (startSubtract == 0 && endSubract == 0) || (startSubtract == 1 && endSubract == 1) {
-		chartScale = []string{"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"}
-	} else if startSubtract == 6 && endSubract == 0 {
-		chartScale = []string{}
-		for i := -6; i <= 0; i++ {
-			item := time.Now().AddDate(0, 0, i).Month().String()[0:3] + " " + strconv.Itoa(time.Now().AddDate(0, 0, i).Day())
-			chartScale = append(chartScale, item)
-		}
-	} else if startSubtract == 29 && endSubract == 0 {
-		chartScale = []string{}
-		for i := -29; i <= 0; i++ {
-			item := time.Now().AddDate(0, 0, i).Month().String()[0:3] + " " + strconv.Itoa(time.Now().AddDate(0, 0, i).Day())
-			chartScale = append(chartScale, item)
-		}
-	} else if endSubract == 0 {
-		timeCounter := time.Now().AddDate(0, 0, -time.Now().Day()+1)
-		for timeCounter.Month() == time.Now().Month() {
-			chartScale = append(chartScale, timeCounter.Month().String()[0:3]+" "+strconv.Itoa(timeCounter.Day()))
-			timeCounter = timeCounter.AddDate(0, 0, 1)
-		}
-	} else {
-		timeCounterMonth := time.Now().AddDate(0, -1, 0)
-		timeCounter := timeCounterMonth.AddDate(0, 0, -timeCounterMonth.Day()+1)
-		for timeCounter.Month() == timeCounterMonth.Month() {
-			chartScale = append(chartScale, timeCounter.Month().String()[0:3]+" "+strconv.Itoa(timeCounter.Day()))
-			timeCounter = timeCounter.AddDate(0, 0, 1)
-		}
-	}
-	return chartScale
-}
-
 func appPath() string {
 	u, err := url.Parse(conf.AppUrl)
 	if err != nil {
@@ -256,4 +186,18 @@ func appPath() string {
 		u.Path = ""
 	}
 	return u.Path
+}
+
+func round(val float64) (newVal float64) {
+	var round float64
+	pow := math.Pow(10, float64(0))
+	digit := pow * val
+	_, div := math.Modf(digit)
+	if div >= 0.0 {
+		round = math.Ceil(digit)
+	} else {
+		round = math.Floor(digit)
+	}
+	newVal = round / pow
+	return
 }

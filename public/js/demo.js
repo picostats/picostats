@@ -367,6 +367,21 @@ if (typeof __draw_linechart !== 'undefined') {
     lineChartOptions.datasetFill = false;
     lineChart.Line(areaChartData, lineChartOptions);
 
+    if (dataRangeEndInt - dataRangeStartInt < 86400)  {
+        if (new Date(dataRangeEndInt*1000).getDate() == new Date().getDate()) {
+            var endSubtract = 0;
+            var startSubtract = 0;
+        } else {
+            var endSubtract = 1;
+            var startSubtract = 1;
+        }
+    } else if (dataRangeEndInt - dataRangeStartInt < 604800) {
+        var startSubtract = 6;
+        var endSubtract = 0;
+    } else {
+        alert(new Date().getMonth())
+    }
+
     //-------------
     //- PIE CHART -
     //-------------
@@ -386,8 +401,8 @@ if (typeof __draw_linechart !== 'undefined') {
                 'This Month': [moment().startOf('month'), moment()],
                 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
-            startDate: moment().subtract(dataRangeStartSubtract, 'days'),
-            endDate: moment().subtract(dataRangeEndSubtract, 'days'),
+            startDate: moment().subtract(startSubtract, 'days'),
+            endDate: moment().subtract(endSubtract, 'days'),
             showCustomRangeLabel: false,
             autoApply: true
         },

@@ -18,6 +18,8 @@ var clip *CliParser
 
 var em *EmailManager
 
+var rm *ReportManager
+
 func main() {
 	// Loads and parses config.json file to struct
 	conf = initConfig()
@@ -42,6 +44,9 @@ func main() {
 
 	// Initializes worker and starts saving data
 	initWorker()
+
+	// Initializes report manager for generating reports
+	initReport()
 
 	// GET view handlers
 	app.Get(appPath(), redirectView)
