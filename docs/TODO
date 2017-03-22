@@ -2,9 +2,6 @@ TODO
 
 v 1.0 beta
 
-- bug - gravatar on manual installation
-- bug - tracker on manual installation
-
 - display data - content, browsers, countries
 - bug - midnight - something wrong with time zones?
 
@@ -105,3 +102,5 @@ v 1.0 beta
 * finish open source version
 * installation instructions
 * optimize speed for data display
+* bug - gravatar on manual installation
+* bug - tracker on manual installation

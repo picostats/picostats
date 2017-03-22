@@ -53,6 +53,7 @@ type PageViewRequest struct {
 func newPageData(ctx *iris.Context) *PageData {
 	pd := &PageData{}
 	pd.Conf = conf
+
 	if isSignedIn(ctx) {
 		session := ctx.Session()
 		userId := session.Get(USER_ID)
@@ -61,7 +62,7 @@ func newPageData(ctx *iris.Context) *PageData {
 		if conf.Dev {
 			pd.Gravatar = conf.AppUrl + "/public/img/user.png"
 		} else {
-			placeholder := conf.AppUrl + "/public/img/user.png"
+			placeholder := "http://" + ctx.Request.Host + appPath() + "/public/img/user.png"
 			placeholder = strings.Replace(placeholder, ":", "%3A", -1)
 			placeholder = strings.Replace(placeholder, "/", "%2F", -1)
 			pd.Gravatar = fmt.Sprintf("https://secure.gravatar.com/avatar/%x?s=50&d=%s", md5.Sum([]byte(pd.User.Email)), placeholder)
