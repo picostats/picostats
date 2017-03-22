@@ -109,8 +109,6 @@ func (rm *ReportManager) getDefaultTimesStr(offset float64) (string, string) {
 func (rm *ReportManager) getDefaultTimes(offset float64, reportType int) (time.Time, time.Time) {
 	var start, end time.Time
 
-	// log.Println(start.AddDate(0, 0, -start.Day()))
-
 	switch reportType {
 	case REPORT_TYPE_TODAY:
 		start = time.Now().In(time.UTC).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
@@ -188,14 +186,9 @@ func (rh *ReportHolder) generateReport() *Report {
 	start := time.Unix(rh.Report.StartInt, 0)
 	end := time.Unix(rh.Report.EndInt, 0)
 
-	// log.Println(start)
-	// log.Println(end)
-
 	rh.PageViews = rh.Website.getPageViews(&start, &end)
 	rh.Visits = rh.Website.getVisits(&start, &end)
 	rh.VisitsPrecise = rh.Website.getVisitsPrecise(&start, &end)
-
-	// log.Println(len(rh.Visits))
 
 	rh.Report.DateRangeType = rh.getDateRangeType()
 	rh.Report.ChartScale = rh.getChartScale()
