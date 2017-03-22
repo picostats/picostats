@@ -101,7 +101,7 @@ func (rm *ReportManager) getReportType(ctx *iris.Context) int {
 }
 
 func (rm *ReportManager) getDefaultTimesStr(offset float64) (string, string) {
-	start := time.Now().In(time.UTC).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
+	start := time.Now().In(time.UTC).Add(time.Minute * time.Duration(-offset)).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
 	end := start.AddDate(0, 0, 1).Add(-time.Millisecond)
 	return strconv.Itoa(int(start.Unix())), strconv.Itoa(int(end.Unix()))
 }
@@ -111,23 +111,23 @@ func (rm *ReportManager) getDefaultTimes(offset float64, reportType int) (time.T
 
 	switch reportType {
 	case REPORT_TYPE_TODAY:
-		start = time.Now().In(time.UTC).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
+		start = time.Now().In(time.UTC).Add(time.Minute * time.Duration(-offset)).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
 		end = start.AddDate(0, 0, 1).Add(-time.Millisecond)
 	case REPORT_TYPE_YESTERDAY:
-		start = time.Now().In(time.UTC).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, 0, -1)
+		start = time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, 0, -1)
 		end = start.AddDate(0, 0, 1).Add(-time.Millisecond)
 	case REPORT_TYPE_7_DAYS:
-		start = time.Now().In(time.UTC).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, 0, -6)
+		start = time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, 0, -6)
 		end = start.AddDate(0, 0, 7).Add(-time.Millisecond)
 	case REPORT_TYPE_30_DAYS:
-		start = time.Now().In(time.UTC).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, 0, -29)
+		start = time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, 0, -29)
 		end = start.AddDate(0, 0, 30).Add(-time.Millisecond)
 	case REPORT_TYPE_THIS_MONTH:
-		end = time.Now().In(time.UTC).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, 0, 1)
+		end = time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, 0, 1)
 		start = end.AddDate(0, 0, -end.Day())
 		end = end.Add(-time.Microsecond)
 	case REPORT_TYPE_LAST_MONTH:
-		start = time.Now().In(time.UTC).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, -1, 0)
+		start = time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, -1, 0)
 		start = start.AddDate(0, 0, -start.Day())
 		end = time.Now().In(time.UTC).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
 		end = end.AddDate(0, 0, -end.Day()).Add(-time.Microsecond)

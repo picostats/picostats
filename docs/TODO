@@ -2,13 +2,16 @@ TODO
 
 v 1.0 beta
 
-- display data - content, browsers, countries
+- fixate demo time zone and don't allow changing
 - bug - midnight - something wrong with time zones?
 
 v 1.1 beta
 
+- display data - content, browsers, countries
+
+v 1.2 beta
+
 - tests for everything
-- website - downloads - binaries
 - website - create facebook page
 - IPv6 issue
 - check indexes
@@ -104,3 +107,4 @@ v 1.0 beta
 * optimize speed for data display
 * bug - gravatar on manual installation
 * bug - tracker on manual installation
+* website - downloads - binaries
