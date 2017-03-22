@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -22,6 +23,46 @@ func (w *Worker) work() {
 		} else {
 			time.Sleep(time.Millisecond * 200)
 		}
+	}
+}
+
+func (w *Worker) workReports() {
+	reportTypes := []int{1, 2, 3, 4, 5, 6}
+	for {
+		var websites []*Website
+		db.Find(&websites)
+		for _, w := range websites {
+			u := &User{}
+			db.First(u, w.OwnerID)
+			for _, rt := range reportTypes {
+				start, end := rm.getDefaultTimes(u.TimeOffset, rt)
+				repMod := &ReportModel{WebsiteID: w.ID, StartInt: start.Unix(), EndInt: end.Unix(), Type: rt}
+				db.First(repMod, repMod)
+
+				if repMod.ID == 0 || time.Since(repMod.UpdatedAt).Seconds() > 10 {
+					newRep := rm.generateNew(rt, int(start.Unix()), int(end.Unix()), w)
+
+					repMod.Visits = newRep.Visits
+					repMod.Visitors = newRep.Visitors
+					repMod.PageViews = newRep.PageViews
+					repMod.BounceRate = newRep.BounceRate
+					repMod.New = newRep.New
+					repMod.Returning = newRep.Returning
+					repMod.DataPoints = joinDataPoints(newRep.DataPoints)
+					repMod.DataPointsPast = joinDataPoints(newRep.DataPointsPast)
+					repMod.TimePerVisit = newRep.TimePerVisit
+					repMod.TimeTotal = newRep.TimeTotal
+					repMod.PageViewsPerVisit = newRep.PageViewsPerVisit
+					repMod.NewPercentage = newRep.NewPercentage
+					repMod.ReturningPercentage = newRep.ReturningPercentage
+					repMod.DateRangeType = newRep.DateRangeType
+					repMod.ChartScale = strings.Join(newRep.ChartScale, "|")
+
+					db.Save(repMod)
+				}
+			}
+		}
+		time.Sleep(time.Second * 5)
 	}
 }
 
@@ -86,8 +127,10 @@ func (w *Worker) handlePageViewRequest(pvr *PageViewRequest) {
 func initWorker() {
 	w := Worker{}
 	if clip.Command == "worker" {
-		w.work()
+		go w.work()
+		w.workReports()
 	} else if clip.Command == "server" {
 		go w.work()
+		go w.workReports()
 	}
 }

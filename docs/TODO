@@ -2,11 +2,12 @@ TODO
 
 v 1.0 beta
 
-- optimize speed for data display
-- bug - midnight - something wrong with time zones
 - bug - gravatar on manual installation
 - bug - tracker on manual installation
 - display data - content, browsers, countries
+
+- optimize speed for data display?
+- bug - midnight - something wrong with time zones?
 
 v 1.1 beta
 

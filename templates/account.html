@@ -64,6 +64,14 @@
                                         <input type="checkbox" name="exclude"{{ if .User.ExcludeMe }} checked{{ end }}> Exclude me from stats when I'm signed in
                                     </label>
                                 </div>
+                                <div class="form-group">
+                                    <label>Your Time Zone</label>
+                                    <select class="form-control select2" style="width: 100%;" name="zone">
+{{ range $key, $zone := .TimeZones }}
+                                        <option value="{{ $zone }}"{{ if eq $zone $.User.TimeZone  }} selected{{ end }}>{{ $zone }}</option>
+{{ end }}
+                                    </select>
+                                </div>
                             </div>
                             <!-- /.box-body -->
                             <div class="box-footer">

@@ -35,6 +35,7 @@ type PageData struct {
 	ErrorFlash   interface{}
 	Report       *Report
 	TitlePrefix  string
+	TimeZones    []string
 }
 
 type PageViewRequest struct {
@@ -164,19 +165,6 @@ func getDuration(older, newer *time.Time) *time.Duration {
 	return &d
 }
 
-func getTimeDaysAgo(numDays int, ctx *iris.Context) *time.Time {
-	numDays--
-	now := time.Now().UTC()
-	session := ctx.Session()
-	offset := session.Get("offset")
-	offsetInt, err := strconv.Atoi(offset.(string))
-	if err != nil {
-		log.Printf("[helpers.go] Error parsing offset: %s", err)
-	}
-	timeAgo := now.Truncate(time.Hour).Add(-time.Hour*time.Duration(now.Hour())).Add(time.Minute*time.Duration(offsetInt)).AddDate(0, 0, -numDays)
-	return &timeAgo
-}
-
 func appPath() string {
 	u, err := url.Parse(conf.AppUrl)
 	if err != nil {
@@ -200,4 +188,29 @@ func round(val float64) (newVal float64) {
 	}
 	newVal = round / pow
 	return
+}
+
+func joinDataPoints(dataPoints []int) string {
+	dataPointsStr := ""
+	for i, dp := range dataPoints {
+		if i == 0 {
+			dataPointsStr += strconv.Itoa(dp)
+		} else {
+			dataPointsStr += "|" + strconv.Itoa(dp)
+		}
+	}
+	return dataPointsStr
+}
+
+func splitDataPoints(dataPointsStr string) []int {
+	var dataPoints []int
+	dataPointsSlice := strings.Split(dataPointsStr, "|")
+	for _, dp := range dataPointsSlice {
+		dpInt, err := strconv.Atoi(dp)
+		if err != nil {
+			log.Printf("[helpers.go] Error in Atoi: %s", err)
+		}
+		dataPoints = append(dataPoints, dpInt)
+	}
+	return dataPoints
 }

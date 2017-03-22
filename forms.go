@@ -23,6 +23,7 @@ type WebsiteForm struct {
 type DateRangeForm struct {
 	Start string `form:"start"`
 	End   string `form:"end"`
+	Type  string `form:"type"`
 }
 
 type PasswordForm struct {
@@ -33,6 +34,7 @@ type PasswordForm struct {
 
 type SettingsForm struct {
 	ExcludeMe string `form:"exclude"`
+	TimeZone  string `form:"zone"`
 }
 
 type InstallForm struct {

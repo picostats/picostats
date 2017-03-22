@@ -10,11 +10,13 @@ import (
 
 type User struct {
 	gorm.Model
-	Email       string `sql:"size:255" unique_index`
-	Password    string `sql:"size:255"`
-	Verified    bool   `sql:"not null"`
-	ExcludeMe   bool   `sql:"not null"`
-	MaxWebsites int    `sql`
+	Email       string  `sql:"size:255" unique_index`
+	Password    string  `sql:"size:255"`
+	Verified    bool    `sql:"not null"`
+	ExcludeMe   bool    `sql:"not null"`
+	MaxWebsites int     `sql`
+	TimeZone    string  `sql:"size:255"`
+	TimeOffset  float64 `sql`
 }
 
 func (u *User) getDefaultWebsite() *Website {
@@ -119,18 +121,22 @@ type PageView struct {
 	SignedInUserId uint `sql:"index"`
 }
 
-type ModelReport struct {
-	Website   *Website
-	WebsiteID uint `sql:"index"`
+type ReportModel struct {
+	gorm.Model
+	Website       *Website
+	WebsiteID     uint   `sql:"index"`
+	StartInt      int64  `sql`
+	EndInt        int64  `sql`
+	Type          int    `sql`
+	DateRangeType string `sql:"size:255"`
+	ChartScale    string `sql:"size:255"`
 
-	Type uint `sql`
-
-	Visits              uint   `sql`
-	Visitors            uint   `sql`
-	PageViews           uint   `sql`
+	Visits              int    `sql`
+	Visitors            int    `sql`
+	PageViews           int    `sql`
 	BounceRate          string `sql:"size:255"`
-	New                 uint   `sql`
-	Returning           uint   `sql`
+	New                 int    `sql`
+	Returning           int    `sql`
 	DataPoints          string `sql:"size:255"`
 	DataPointsPast      string `sql:"size:255"`
 	TimePerVisit        string `sql:"size:255"`
@@ -138,8 +144,4 @@ type ModelReport struct {
 	PageViewsPerVisit   string `sql:"size:255"`
 	NewPercentage       string `sql:"size:255"`
 	ReturningPercentage string `sql:"size:255"`
-	DateRangeType       string `sql:"size:255"`
-	ChartScale          string `sql:"size:255"`
-	StartInt            uint   `sql`
-	EndInt              uint   `sql`
 }

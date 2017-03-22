@@ -20,6 +20,8 @@ var em *EmailManager
 
 var rm *ReportManager
 
+var tzm *TimeZonesManager
+
 func main() {
 	// Loads and parses config.json file to struct
 	conf = initConfig()
@@ -38,6 +40,9 @@ func main() {
 
 	// Initializes Redis connection
 	red = initRedis()
+
+	// Initializes time zones parser
+	tzm = initZones()
 
 	// Initializes email service
 	initEmails()

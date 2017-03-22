@@ -11,6 +11,7 @@ def deploy():
     local('cp -R ../public picostatsnew/')
     local('cp -R ../templates picostatsnew/')
     local('cp production.json picostatsnew/config.json')
+    local('cp ../timezones.json picostatsnew/timezones.json')
     local('tar -czf picostatsnew.tar.gz picostatsnew/')
     local('rm -rf picostatsnew')
     put('picostatsnew.tar.gz')

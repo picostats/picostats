@@ -48,11 +48,15 @@ func installPostView(ctx *iris.Context) {
 		log.Printf("[views.go] Error reading SignUpForm: %s", err)
 	}
 
-	session := ctx.Session()
-	session.Set("offset", inf.Offset)
+	var offset float64
+
+	offset, err = strconv.ParseFloat(inf.Offset, 64)
+	if err != nil {
+		log.Printf("[views.go] Error in ParseFloat: %s", err)
+	}
 
 	if inf.Password1 == inf.Password2 {
-		user := &User{Email: inf.Email, Password: getMD5Hash(inf.Password1), MaxWebsites: conf.MaxWebsites, Verified: true}
+		user := &User{Email: inf.Email, Password: getMD5Hash(inf.Password1), MaxWebsites: conf.MaxWebsites, Verified: true, TimeOffset: offset}
 		db.Create(user)
 		signIn(ctx, user)
 		ctx.Redirect(conf.AppUrl + "/install2")
@@ -96,11 +100,18 @@ func signInPostView(ctx *iris.Context) {
 		log.Printf("[views.go] Error reading SignInForm: %s", err)
 	}
 
-	session := ctx.Session()
-	session.Set("offset", sif.Offset)
+	var offset float64
+
+	offset, err = strconv.ParseFloat(sif.Offset, 64)
+	if err != nil {
+		log.Printf("[views.go] Error in ParseFloat: %s", err)
+	}
 
 	user := &User{}
 	db.Where("email = ?", sif.Email).First(user)
+
+	user.TimeOffset = offset
+	db.Save(user)
 
 	if user.ID != 0 {
 		if user.Password == getMD5Hash(sif.Password) {
@@ -207,6 +218,13 @@ func collectImgView(ctx *iris.Context) {
 
 func accountView(ctx *iris.Context) {
 	pd := newPageData(ctx)
+
+	for _, tz := range tzm.TimeZones {
+		for _, tzs := range tz.UTC {
+			pd.TimeZones = append(pd.TimeZones, tzs)
+		}
+	}
+
 	ctx.Render("account.html", pd)
 }
 
@@ -345,7 +363,7 @@ func websiteView(ctx *iris.Context) {
 	if w.OwnerID == pd.User.ID {
 		if pd.User.MaxWebsites == 0 || w.Default {
 			pd.Form = w
-			pd.Report = rm.generateReport(ctx, w)
+			pd.Report = rm.getReport(ctx, w, pd)
 			ctx.Render("website.html", pd)
 		} else {
 			session := ctx.Session()
@@ -371,6 +389,7 @@ func changeDateRangeView(ctx *iris.Context) {
 	session := ctx.Session()
 	session.Set("date-range-start", drf.Start)
 	session.Set("date-range-end", drf.End)
+	session.Set("date-range-type", drf.Type)
 
 	ctx.Redirect(conf.AppUrl + "/" + wId)
 }
@@ -436,6 +455,8 @@ func saveSettingsPostView(ctx *iris.Context) {
 	} else {
 		pd.User.ExcludeMe = false
 	}
+
+	pd.User.TimeZone = sf.TimeZone
 
 	db.Save(pd.User)
 

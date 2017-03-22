@@ -378,8 +378,16 @@ if (typeof __draw_linechart !== 'undefined') {
     } else if (dataRangeEndInt - dataRangeStartInt < 604800) {
         var startSubtract = 6;
         var endSubtract = 0;
+    } else if (dataRangeEndInt - dataRangeStartInt == 2591999) {
+        var startSubtract = 29;
+        var endSubtract = 0;
+    } else if (new Date(dataRangeEndInt*1000).getMonth() == new Date().getMonth()) {
+        var startSubtract = new Date().getDate() - 1;
+        var endSubtract = 0;
     } else {
-        alert(new Date().getMonth())
+        var endSubtract = new Date().getDate();
+        var startSubtract = new Date(dataRangeEndInt*1000).getDate();
+        startSubtract = startSubtract + endSubtract - 1;
     }
 
     //-------------
@@ -410,6 +418,7 @@ if (typeof __draw_linechart !== 'undefined') {
             $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
             $('#start').val((start / 1000 | 0));
             $('#end').val((end / 1000 | 0));
+            $('#type').val(getReportType(start, end));
             $('#dateRangeForm').submit();
         }
     );
@@ -417,4 +426,24 @@ if (typeof __draw_linechart !== 'undefined') {
 
 hljs.initHighlightingOnLoad();
 
+$(".select2").select2();
+
 })(jQuery, $.AdminLTE);
+
+function getReportType(start, end) {
+    if (end - start < 86400000)  {
+        if (new Date(end).getDate() == new Date().getDate()) {
+            return 1;
+        } else {
+            return 2;
+        }
+    } else if (end - start < 604800000) {
+        return 3;
+    } else if (end - start == 2591999999) {
+        return 4;
+    } else if (new Date(end).getMonth() == new Date().getMonth()) {
+        return 5;
+    } else {
+        return 6;
+    }
+}
