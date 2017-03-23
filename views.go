@@ -110,8 +110,10 @@ func signInPostView(ctx *iris.Context) {
 	user := &User{}
 	db.Where("email = ?", sif.Email).First(user)
 
-	user.TimeOffset = offset
-	db.Save(user)
+	if conf.DemoLock != user.ID {
+		user.TimeOffset = offset
+		db.Save(user)
+	}
 
 	if user.ID != 0 {
 		if user.Password == getMD5Hash(sif.Password) {
@@ -390,6 +392,8 @@ func changeDateRangeView(ctx *iris.Context) {
 	session.Set("date-range-start", drf.Start)
 	session.Set("date-range-end", drf.End)
 	session.Set("date-range-type", drf.Type)
+
+	log.Println(drf.Type)
 
 	ctx.Redirect(conf.AppUrl + "/" + wId)
 }

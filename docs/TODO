@@ -3,7 +3,6 @@ TODO
 v 1.0 beta
 
 - fixate demo time zone and don't allow changing
-- bug - midnight - something wrong with time zones?
 
 v 1.1 beta
 
@@ -108,3 +107,4 @@ v 1.0 beta
 * bug - gravatar on manual installation
 * bug - tracker on manual installation
 * website - downloads - binaries
+* bug - midnight - something wrong with time zones?

@@ -367,21 +367,25 @@ if (typeof __draw_linechart !== 'undefined') {
     lineChartOptions.datasetFill = false;
     lineChart.Line(areaChartData, lineChartOptions);
 
-    if (dataRangeEndInt - dataRangeStartInt < 86400)  {
-        if (new Date(dataRangeEndInt*1000).getDate() == new Date().getDate()) {
-            var endSubtract = 0;
-            var startSubtract = 0;
-        } else {
-            var endSubtract = 1;
-            var startSubtract = 1;
-        }
-    } else if (dataRangeEndInt - dataRangeStartInt < 604800) {
+    // var offset = new Date().getTimezoneOffset();
+    // var offset = 0;
+    // var now = new Date();
+    // now.setTime(new Date().getTime() + offset * 60000);
+    // var reportType = getReportType(dataRangeStartInt*1000, dataRangeEndInt*1000);
+
+    if (reportType == 1)  {
+        var endSubtract = 0;
+        var startSubtract = 0;
+    } else if (reportType == 2) {
+        var endSubtract = 1;
+        var startSubtract = 1;
+    } else if (reportType == 3) {
         var startSubtract = 6;
         var endSubtract = 0;
-    } else if (dataRangeEndInt - dataRangeStartInt == 2591999) {
+    } else if (reportType == 4) {
         var startSubtract = 29;
         var endSubtract = 0;
-    } else if (new Date(dataRangeEndInt*1000).getMonth() == new Date().getMonth()) {
+    } else if (reportType == 5) {
         var startSubtract = new Date().getDate() - 1;
         var endSubtract = 0;
     } else {
@@ -389,6 +393,8 @@ if (typeof __draw_linechart !== 'undefined') {
         var startSubtract = new Date(dataRangeEndInt*1000).getDate();
         startSubtract = startSubtract + endSubtract - 1;
     }
+
+    // alert(dataRangeEndInt - dataRangeStartInt);
 
     //-------------
     //- PIE CHART -
@@ -398,6 +404,12 @@ if (typeof __draw_linechart !== 'undefined') {
     var pieChart = new Chart(pieChartCanvas);
     //Create pie or douhnut chart
     // You can switch between pie and douhnut using the method below.
+    // var offset = 0;
+    // offset = -offset;
+    // alert(offset);
+    // alert(startSubtract);
+    // alert(endSubtract);
+    var offset = new Date().getTimezoneOffset();
     pieChart.Doughnut(PieData, pieOptions);
     $('#daterange-btn').daterangepicker(
         {
@@ -414,11 +426,15 @@ if (typeof __draw_linechart !== 'undefined') {
             showCustomRangeLabel: false,
             autoApply: true
         },
-        function (start, end) {
+        function (start, end, label) {
+            start = start.subtract(offset, 'minutes')
+            end = end.subtract(offset, 'minutes')
+            // alert(start.utc())
+            // alert(end.utc())
             $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
             $('#start').val((start / 1000 | 0));
             $('#end').val((end / 1000 | 0));
-            $('#type').val(getReportType(start, end));
+            $('#type').val(getReportType(label));
             $('#dateRangeForm').submit();
         }
     );
@@ -430,18 +446,17 @@ $(".select2").select2();
 
 })(jQuery, $.AdminLTE);
 
-function getReportType(start, end) {
-    if (end - start < 86400000)  {
-        if (new Date(end).getDate() == new Date().getDate()) {
-            return 1;
-        } else {
-            return 2;
-        }
-    } else if (end - start < 604800000) {
+
+function getReportType(label) {
+    if (label == 'Today') {
+        return 1;
+    } else if (label == 'Yesterday') {
+        return 2;
+    } else if (label == 'Last 7 Days') {
         return 3;
-    } else if (end - start == 2591999999) {
+    } else if (label == 'Last 30 Days') {
         return 4;
-    } else if (new Date(end).getMonth() == new Date().getMonth()) {
+    } else if (label == 'This Month') {
         return 5;
     } else {
         return 6;

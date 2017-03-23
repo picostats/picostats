@@ -11,6 +11,7 @@ import (
 )
 
 type Report struct {
+	Type                int
 	Visits              int
 	Visitors            int
 	PageViews           int
@@ -35,32 +36,19 @@ type ReportManager struct {
 
 func (rm *ReportManager) getReport(ctx *iris.Context, w *Website, pd *PageData) *Report {
 	reportType := rm.getReportType(ctx)
-	session := ctx.Session()
-
-	startStr := session.GetString("date-range-start")
-	endStr := session.GetString("date-range-end")
-
-	if len(startStr) == 0 || len(endStr) == 0 {
-		startStr, endStr = rm.getDefaultTimesStr(pd.User.TimeOffset)
-	}
-
-	startInt, err := strconv.Atoi(startStr)
-	if err != nil {
-		log.Printf("[report.go] Error parsing timestamp: %s", err)
-	}
-
-	endInt, err := strconv.Atoi(endStr)
-	if err != nil {
-		log.Printf("[report.go] Error parsing timestamp: %s", err)
-	}
-
 	repMod := &ReportModel{}
-	db.Where("website_id = ? AND start_int = ? AND end_int = ? AND type = ?", w.ID, startInt, endInt, reportType).First(repMod)
+	// db.Where("website_id = ? AND start_int = ? AND end_int = ? AND type = ?", w.ID, startInt, endInt, reportType).First(repMod)
+	db.Where("website_id = ? AND type = ?", w.ID, reportType).First(repMod)
 
 	if repMod.ID == 0 {
+		log.Println("fdsfsdafa")
+		start, end := rm.getDefaultTimes(pd.User.TimeOffset, reportType)
+		startInt := int(start.Unix())
+		endInt := int(end.Unix())
 		return rm.generateNew(reportType, startInt, endInt, w)
 	} else {
 		report := &Report{
+			Type:                reportType,
 			Visits:              repMod.Visits,
 			Visitors:            repMod.Visitors,
 			PageViews:           repMod.PageViews,
@@ -193,6 +181,7 @@ func (rh *ReportHolder) generateReport() *Report {
 	rh.Report.DateRangeType = rh.getDateRangeType()
 	rh.Report.ChartScale = rh.getChartScale()
 
+	rh.Report.Type = rh.Type
 	rh.Report.PageViews = len(rh.PageViews)
 	rh.Report.Visitors = rh.countVisitors()
 	rh.Report.Visits = len(rh.Visits)

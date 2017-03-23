@@ -4,7 +4,7 @@
         <section class="content-header">
             <h1>
                 {{ .Form.Name }}
-                <small><a href="http://{{ .Form.Url }}" target="_blank">{{ .Form.Url }}</a></small>
+                <small><a href="{{ .Form.Url }}" target="_blank">{{ .Form.Url }}</a></small>
             </h1>
         </section>
 
@@ -245,6 +245,8 @@
 
     var dataRangeStartInt = {{ .Report.StartInt }};
     var dataRangeEndInt = {{ .Report.EndInt }};
+
+    var reportType = {{ .Report.Type }};
 
     </script>
 

@@ -59,14 +59,15 @@ func newPageData(ctx *iris.Context) *PageData {
 		userId := session.Get(USER_ID)
 		pd.User = &User{}
 		db.First(pd.User, userId.(uint))
-		if conf.Dev {
-			pd.Gravatar = conf.AppUrl + "/public/img/user.png"
+		placeholder := ""
+		if strings.Contains(conf.AppUrl, "http://") || strings.Contains(conf.AppUrl, "https://") {
+			placeholder = conf.AppUrl + "/public/img/user.png"
 		} else {
-			placeholder := "http://" + ctx.Request.Host + appPath() + "/public/img/user.png"
-			placeholder = strings.Replace(placeholder, ":", "%3A", -1)
-			placeholder = strings.Replace(placeholder, "/", "%2F", -1)
-			pd.Gravatar = fmt.Sprintf("https://secure.gravatar.com/avatar/%x?s=50&d=%s", md5.Sum([]byte(pd.User.Email)), placeholder)
+			placeholder = "http://" + ctx.Request.Host + appPath() + "/public/img/user.png"
 		}
+		placeholder = strings.Replace(placeholder, ":", "%3A", -1)
+		placeholder = strings.Replace(placeholder, "/", "%2F", -1)
+		pd.Gravatar = fmt.Sprintf("https://secure.gravatar.com/avatar/%x?s=50&d=%s", md5.Sum([]byte(pd.User.Email)), placeholder)
 		var websites []*Website
 		db.Order("id").Where("owner_id = ?", pd.User.ID).Find(&websites)
 		if pd.User.countWebsites() >= pd.User.MaxWebsites && pd.User.MaxWebsites != 0 {
