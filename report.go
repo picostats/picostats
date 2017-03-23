@@ -87,12 +87,6 @@ func (rm *ReportManager) getReportType(ctx *iris.Context) int {
 	return typeInt
 }
 
-func (rm *ReportManager) getDefaultTimesStr(offset float64) (string, string) {
-	start := time.Now().In(time.UTC).Add(time.Minute * time.Duration(-offset)).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
-	end := start.AddDate(0, 0, 1).Add(-time.Millisecond)
-	return strconv.Itoa(int(start.Unix())), strconv.Itoa(int(end.Unix()))
-}
-
 func (rm *ReportManager) getDefaultTimes(offset float64, reportType int) (time.Time, time.Time) {
 	var start, end time.Time
 
@@ -111,16 +105,16 @@ func (rm *ReportManager) getDefaultTimes(offset float64, reportType int) (time.T
 		end = start.AddDate(0, 0, 30).Add(-time.Millisecond)
 	case REPORT_TYPE_THIS_MONTH:
 		end = time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, 0, 1)
-		start = end.AddDate(0, 0, -end.Day())
+		start = end.AddDate(0, 0, -end.Day()+1)
 		end = end.Add(-time.Microsecond)
 	case REPORT_TYPE_LAST_MONTH:
 		start = time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, -1, 0)
 		start = start.AddDate(0, 0, -start.Day())
-		end = time.Now().In(time.UTC).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
+		end = time.Now().In(time.UTC).Add(time.Minute * time.Duration(-offset)).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
 		end = end.AddDate(0, 0, -end.Day()).Add(-time.Microsecond)
 	default:
-		start = time.Now().In(time.UTC).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
-		end = start.AddDate(0, 0, 1).Add(-time.Microsecond)
+		start = time.Now().In(time.UTC).Add(time.Minute * time.Duration(-offset)).Truncate(24 * time.Hour).Add(time.Minute * time.Duration(offset))
+		end = start.AddDate(0, 0, 1).Add(-time.Millisecond)
 	}
 
 	return start, end
