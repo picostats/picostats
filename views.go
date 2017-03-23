@@ -393,8 +393,6 @@ func changeDateRangeView(ctx *iris.Context) {
 	session.Set("date-range-end", drf.End)
 	session.Set("date-range-type", drf.Type)
 
-	log.Println(drf.Type)
-
 	ctx.Redirect(conf.AppUrl + "/" + wId)
 }
 
@@ -460,7 +458,20 @@ func saveSettingsPostView(ctx *iris.Context) {
 		pd.User.ExcludeMe = false
 	}
 
-	pd.User.TimeZone = sf.TimeZone
+	// if pd.User.TimeZone != sf.TimeZone {
+	// 	pd.User.TimeZone = sf.TimeZone
+	// 	for _, tz := range tzm.TimeZones {
+	// 		for _, utc := range tz.UTC {
+	// 			if utc == sf.TimeZone {
+	// 				pd.User.TimeOffset = tz.Offset * 60
+	// 			}
+	// 		}
+	// 	}
+	// }
+
+	if pd.User.TimeOffset != sf.TimeOffset {
+		pd.User.TimeOffset = sf.TimeOffset
+	}
 
 	db.Save(pd.User)
 

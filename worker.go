@@ -36,7 +36,7 @@ func (w *Worker) workReports() {
 			db.First(u, w.OwnerID)
 			for _, rt := range reportTypes {
 				start, end := rm.getDefaultTimes(u.TimeOffset, rt)
-				repMod := &ReportModel{WebsiteID: w.ID, StartInt: start.Unix(), EndInt: end.Unix(), Type: rt}
+				repMod := &ReportModel{WebsiteID: w.ID, Type: rt}
 				db.First(repMod, repMod)
 
 				if repMod.ID == 0 || time.Since(repMod.UpdatedAt).Seconds() > 10 {
@@ -57,6 +57,8 @@ func (w *Worker) workReports() {
 					repMod.ReturningPercentage = newRep.ReturningPercentage
 					repMod.DateRangeType = newRep.DateRangeType
 					repMod.ChartScale = strings.Join(newRep.ChartScale, "|")
+					repMod.StartInt = start.Unix()
+					repMod.EndInt = end.Unix()
 
 					db.Save(repMod)
 				}

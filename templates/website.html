@@ -248,6 +248,15 @@
 
     var reportType = {{ .Report.Type }};
 
+    var demoLock = {{ .Conf.DemoLock }};
+    var websiteId = {{ .Form.ID }};
+
+    if (demoLock == websiteId) {
+        var offset = new Date().getTimezoneOffset();
+    } else {
+        var offset = 0;
+    }
+
     </script>
 
 

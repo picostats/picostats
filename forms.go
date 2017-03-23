@@ -34,7 +34,8 @@ type PasswordForm struct {
 
 type SettingsForm struct {
 	ExcludeMe string `form:"exclude"`
-	TimeZone  string `form:"zone"`
+	// TimeZone  string `form:"zone"`
+	TimeOffset float64 `form:"offset"`
 }
 
 type InstallForm struct {

@@ -409,7 +409,6 @@ if (typeof __draw_linechart !== 'undefined') {
     // alert(offset);
     // alert(startSubtract);
     // alert(endSubtract);
-    var offset = new Date().getTimezoneOffset();
     pieChart.Doughnut(PieData, pieOptions);
     $('#daterange-btn').daterangepicker(
         {

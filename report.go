@@ -41,7 +41,6 @@ func (rm *ReportManager) getReport(ctx *iris.Context, w *Website, pd *PageData) 
 	db.Where("website_id = ? AND type = ?", w.ID, reportType).First(repMod)
 
 	if repMod.ID == 0 {
-		log.Println("fdsfsdafa")
 		start, end := rm.getDefaultTimes(pd.User.TimeOffset, reportType)
 		startInt := int(start.Unix())
 		endInt := int(end.Unix())
