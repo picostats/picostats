@@ -44,7 +44,7 @@ func (rm *ReportManager) getReport(ctx *iris.Context, w *Website, pd *PageData) 
 		start, end := rm.getDefaultTimes(pd.User.TimeOffset, reportType)
 		startInt := int(start.Unix())
 		endInt := int(end.Unix())
-		return rm.generateNew(reportType, startInt, endInt, w)
+		return rm.generateNew(reportType, startInt, endInt, w, pd.User.TimeOffset)
 	} else {
 		report := &Report{
 			Type:                reportType,
@@ -105,7 +105,7 @@ func (rm *ReportManager) getDefaultTimes(offset float64, reportType int) (time.T
 		end = start.AddDate(0, 0, 30).Add(-time.Millisecond)
 	case REPORT_TYPE_THIS_MONTH:
 		end = time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, 0, 1)
-		start = end.AddDate(0, 0, -end.Day()+1)
+		start = end.AddDate(0, 0, -end.Day()+1).Add(-time.Duration(end.Hour()) * time.Hour).Add(time.Minute * time.Duration(offset))
 		end = end.Add(-time.Microsecond)
 	case REPORT_TYPE_LAST_MONTH:
 		start = time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Truncate(24*time.Hour).Add(time.Minute*time.Duration(offset)).AddDate(0, -1, 0)
@@ -117,39 +117,18 @@ func (rm *ReportManager) getDefaultTimes(offset float64, reportType int) (time.T
 		end = start.AddDate(0, 0, 1).Add(-time.Millisecond)
 	}
 
+	// log.Println(start)
+	// log.Println(end)
+	// log.Println(reportType)
+
 	return start, end
 }
 
-func (rm *ReportManager) generateNew(reportType, startInt, endInt int, w *Website) *Report {
+func (rm *ReportManager) generateNew(reportType, startInt, endInt int, w *Website, offset float64) *Report {
 	r := &Report{StartInt: int64(startInt), EndInt: int64(endInt)}
 	rh := &ReportHolder{Website: w, Type: reportType, Report: r}
 
-	rh.generateReport()
-
-	// repMod := &ReportModel{
-	// 	WebsiteID:     w.ID,
-	// 	StartInt:      rh.Report.StartInt,
-	// 	EndInt:        rh.Report.EndInt,
-	// 	Type:          reportType,
-	// 	DateRangeType: rh.Report.DateRangeType,
-	// 	ChartScale:    strings.Join(rh.Report.ChartScale, "|"),
-
-	// 	Visits:              rh.Report.Visits,
-	// 	Visitors:            rh.Report.Visitors,
-	// 	PageViews:           rh.Report.PageViews,
-	// 	BounceRate:          rh.Report.BounceRate,
-	// 	New:                 rh.Report.New,
-	// 	Returning:           rh.Report.Returning,
-	// 	DataPoints:          joinDataPoints(rh.Report.DataPoints),
-	// 	DataPointsPast:      joinDataPoints(rh.Report.DataPointsPast),
-	// 	TimePerVisit:        rh.Report.TimePerVisit,
-	// 	TimeTotal:           rh.Report.TimeTotal,
-	// 	PageViewsPerVisit:   rh.Report.PageViewsPerVisit,
-	// 	NewPercentage:       rh.Report.NewPercentage,
-	// 	ReturningPercentage: rh.Report.ReturningPercentage,
-	// }
-
-	// db.Create(repMod)
+	rh.generateReport(offset)
 
 	return rh.Report
 }
@@ -163,7 +142,7 @@ type ReportHolder struct {
 	Report        *Report
 }
 
-func (rh *ReportHolder) generateReport() *Report {
+func (rh *ReportHolder) generateReport(offset float64) *Report {
 	start := time.Unix(rh.Report.StartInt, 0)
 	end := time.Unix(rh.Report.EndInt, 0)
 
@@ -172,7 +151,7 @@ func (rh *ReportHolder) generateReport() *Report {
 	rh.VisitsPrecise = rh.Website.getVisitsPrecise(&start, &end)
 
 	rh.Report.DateRangeType = rh.getDateRangeType()
-	rh.Report.ChartScale = rh.getChartScale()
+	rh.Report.ChartScale = rh.getChartScale(offset)
 
 	rh.Report.Type = rh.Type
 	rh.Report.PageViews = len(rh.PageViews)
@@ -312,7 +291,7 @@ func (rh *ReportHolder) getDateRangeType() string {
 	}
 }
 
-func (rh *ReportHolder) getChartScale() []string {
+func (rh *ReportHolder) getChartScale(offset float64) []string {
 	chartScale := []string{}
 
 	switch rh.Type {
@@ -322,17 +301,17 @@ func (rh *ReportHolder) getChartScale() []string {
 		chartScale = []string{"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"}
 	case REPORT_TYPE_7_DAYS:
 		for i := -6; i <= 0; i++ {
-			item := time.Now().AddDate(0, 0, i).Month().String()[0:3] + " " + strconv.Itoa(time.Now().AddDate(0, 0, i).Day())
+			item := time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).AddDate(0, 0, i).Month().String()[0:3] + " " + strconv.Itoa(time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).AddDate(0, 0, i).Day())
 			chartScale = append(chartScale, item)
 		}
 	case REPORT_TYPE_30_DAYS:
 		for i := -29; i <= 0; i++ {
-			item := time.Now().AddDate(0, 0, i).Month().String()[0:3] + " " + strconv.Itoa(time.Now().AddDate(0, 0, i).Day())
+			item := time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).AddDate(0, 0, i).Month().String()[0:3] + " " + strconv.Itoa(time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).AddDate(0, 0, i).Day())
 			chartScale = append(chartScale, item)
 		}
 	case REPORT_TYPE_THIS_MONTH:
-		timeCounter := time.Now().AddDate(0, 0, -time.Now().Day()+1)
-		for timeCounter.Month() == time.Now().Month() {
+		timeCounter := time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).AddDate(0, 0, -time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Day()+1)
+		for timeCounter.Month() == time.Now().In(time.UTC).Add(time.Minute*time.Duration(-offset)).Month() {
 			chartScale = append(chartScale, timeCounter.Month().String()[0:3]+" "+strconv.Itoa(timeCounter.Day()))
 			timeCounter = timeCounter.AddDate(0, 0, 1)
 		}
@@ -396,6 +375,7 @@ func (rh *ReportHolder) getDataPoints(start, end time.Time) []int {
 	} else {
 		first := true
 		limit := ((time.Duration(time.Since(start).Minutes()-time.Since(end).Minutes()) + 1) * time.Minute).Hours() / 24
+
 		for i := 0; i < int(limit); i++ {
 			older := start.AddDate(0, 0, i)
 			newer := older.AddDate(0, 0, 1).Add(-time.Microsecond)

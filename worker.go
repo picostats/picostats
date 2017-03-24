@@ -39,8 +39,8 @@ func (w *Worker) workReports() {
 				repMod := &ReportModel{WebsiteID: w.ID, Type: rt}
 				db.First(repMod, repMod)
 
-				if repMod.ID == 0 || time.Since(repMod.UpdatedAt).Seconds() > 10 {
-					newRep := rm.generateNew(rt, int(start.Unix()), int(end.Unix()), w)
+				if repMod.ID == 0 || time.Since(repMod.UpdatedAt).Seconds() > 60 {
+					newRep := rm.generateNew(rt, int(start.Unix()), int(end.Unix()), w, u.TimeOffset)
 
 					repMod.Visits = newRep.Visits
 					repMod.Visitors = newRep.Visitors

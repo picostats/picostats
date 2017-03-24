@@ -31,9 +31,7 @@ v 1.2 beta
 - goal conversions
 - wordpress plugin
 - API
-- exclude me from tracking
 - exclude IPs from tracking
-- docker image
 
 DONE
 
@@ -108,3 +106,5 @@ v 1.0 beta
 * bug - tracker on manual installation
 * website - downloads - binaries
 * bug - midnight - something wrong with time zones?
+* docker image
+* exclude me from tracking
