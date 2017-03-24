@@ -1,7 +1,7 @@
 'use strict';
 
 var queue = window.ps.q || [];
-var trackerUrl = './tracker.png';
+var trackerUrl = document.getElementsByTagName('script')[0].src.replace("public/tracker.js", "tracker.png");
 var website = '';
 var commands = {
     "pageview": pageview,

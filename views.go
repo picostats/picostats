@@ -510,17 +510,3 @@ func verifyView(ctx *iris.Context) {
 		u.redirectToDefaultWebsite(ctx)
 	}
 }
-
-func trackJSView(ctx *iris.Context) {
-	data := map[string]string{}
-
-	if strings.Contains(conf.AppUrl, ctx.Request.Host) {
-		data["AppUrl"] = strings.Replace(strings.Replace(conf.AppUrl, "https://", "//", -1), "http://", "//", -1)
-	} else {
-		data["AppUrl"] = "//" + ctx.Request.Host + appPath()
-	}
-
-	log.Println(ctx.Request.Host)
-
-	ctx.Render("tracker.js", data)
-}
