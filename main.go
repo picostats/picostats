@@ -69,6 +69,7 @@ func main() {
 	app.Get(appPath()+"/verify", verifyMessageView)
 	app.Get(appPath()+"/verify/{hash}", verifyView)
 	app.Get(appPath()+"/tracker.png", collectImgView)
+	app.Get(appPath()+"/tracker.js", trackJSView)
 	app.Get(appPath()+"/{id}", loginRequired, websiteView)
 
 	// POST view handlers
