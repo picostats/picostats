@@ -1,9 +1,5 @@
 TODO
 
-v 1.0 beta
-
-- fixate demo time zone and don't allow changing
-
 v 1.1 beta
 
 - display data - content, browsers, countries
@@ -108,3 +104,4 @@ v 1.0 beta
 * bug - midnight - something wrong with time zones?
 * docker image
 * exclude me from tracking
+* fixate demo time zone and don't allow changing
