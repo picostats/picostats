@@ -48,7 +48,7 @@ func (c *CliParser) parseCli() {
 	}
 
 	for _, arg := range os.Args {
-		if arg == "server" || arg == "worker" || arg == "serverww" {
+		if arg == "default" || arg == "worker" || arg == "server" {
 			c.Command = arg
 		}
 
@@ -67,9 +67,9 @@ Usage: picostats [COMMAND] [FLAGS]
 
 Commands:
 
-    server     - run in server mode together with worker (default)
-    worker     - run worker without server
-    serverww   - run in server mode without worker
+    default  - run in server mode together with worker
+    worker   - run worker without server
+    server   - run in server mode without worker
 
 Flags:
 
@@ -82,6 +82,6 @@ Flags:
 }
 
 func initCli() {
-	clip = &CliParser{Command: "server"}
+	clip = &CliParser{Command: "default"}
 	clip.parseCli()
 }

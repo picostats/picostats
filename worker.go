@@ -131,7 +131,7 @@ func initWorker() {
 	if clip.Command == "worker" {
 		go w.work()
 		w.workReports()
-	} else if clip.Command == "server" {
+	} else if clip.Command == "default" {
 		go w.work()
 		go w.workReports()
 	}
