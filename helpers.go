@@ -36,6 +36,7 @@ type PageData struct {
 	Report       *Report
 	TitlePrefix  string
 	TimeZones    []string
+	Version      string
 }
 
 type PageViewRequest struct {
@@ -92,6 +93,9 @@ func newPageData(ctx *iris.Context) *PageData {
 	if conf.AppUrl == "/" {
 		conf.AppUrl = ""
 	}
+
+	pd.Version = VERSION
+
 	return pd
 }
 
