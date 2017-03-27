@@ -1,26 +1,25 @@
 TODO
 
-v 1.1 beta
+v 1.0.1 beta
 
 - display data - content, browsers, countries
+- change default range
+- display data - trends (percentage)
+- world map
+- javascript copy tracker code
+- verify tracker code button
+- redis password
 
-v 1.2 beta
+v 1.0.2 beta
 
 - tests for everything
 - website - create facebook page
 - IPv6 issue
 - check indexes
 - real time stats
-- change default range
-- display data - trends (percentage)
-- world map
 - data display - other charts on main chart (visitors, pageviews, ...)
-- javascript copy tracker code
-- verify tracker code button
-- redis password
 - drag and drop widgets
 - more data about the visitor
-- support for other databases
 - website monitoring
 - remember me
 - password recovery
@@ -28,10 +27,11 @@ v 1.2 beta
 - wordpress plugin
 - API
 - exclude IPs from tracking
+- user management
 
 DONE
 
-v 1.0 beta
+v 1.0.0 beta
 
 * buy a domain
 * buy first droplet
@@ -105,3 +105,4 @@ v 1.0 beta
 * docker image
 * exclude me from tracking
 * fixate demo time zone and don't allow changing
+* support for other databases (PostgreSQL, SQLite, MySQL)

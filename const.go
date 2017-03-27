@@ -1,7 +1,7 @@
 package main
 
 const (
-	VERSION = "1.0.0 beta"
+	VERSION = "v1.0.0 beta"
 
 	SESSION_COOKIE = "picostatssid"
 
