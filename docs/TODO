@@ -9,6 +9,8 @@ v 1.0.1 beta
 - javascript copy tracker code
 - verify tracker code button
 - redis password
+- user management
+- wordpress plugin
 
 v 1.0.2 beta
 
@@ -24,10 +26,8 @@ v 1.0.2 beta
 - remember me
 - password recovery
 - goal conversions
-- wordpress plugin
 - API
 - exclude IPs from tracking
-- user management
 
 DONE
 
