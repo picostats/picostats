@@ -1,0 +1,16 @@
+#!/bin/bash
+
+mkdir picostats
+
+cp ../config.json.dist picostats/
+cp ../picostats picostats/
+cp ../timezones.json picostats/
+cp -r ../public picostats/
+cp -r ../templates picostats/
+tar -czf picostats-v$1.tar.gz picostats
+
+rm -rf picostats
+
+scp picostats-v$1.tar.gz picostats@46.101.254.59:binaries/
+
+rm picostats-v$1.tar.gz

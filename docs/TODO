@@ -2,7 +2,8 @@ TODO
 
 v 1.0.1 beta
 
-- display data - content, browsers, countries
+- release script + move fabric to bash
+- display data - content, browsers, countries, entry pages, exit pages
 - change default range
 - display data - trends (percentage)
 - world map
