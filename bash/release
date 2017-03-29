@@ -11,6 +11,5 @@ tar -czf picostats-v$1.tar.gz picostats
 
 rm -rf picostats
 
-scp picostats-v$1.tar.gz picostats@46.101.254.59:binaries/
-
-rm picostats-v$1.tar.gz
+# scp picostats-v$1.tar.gz picostats@46.101.254.59:binaries/
+# rm picostats-v$1.tar.gz
