@@ -1,0 +1,14 @@
+{
+    "app_url":              "https://www.picostats.com/app",
+    "db_type":              "postgres",
+    "db_url":               "user=picostats password=Hohnohyu9ooMaimaing6 dbname=picostats sslmode=disable",
+    "redis_url":            "localhost:6379",
+    "listen_addr":          ":8080",
+    "log_sql":              false,
+    "dev":                  false,
+    "registration_enabled": true,
+    "encryption_key":       "uw3ahchaxoothieghu6Eel4chood2eto",
+    "sparkpost_key":        "59d81e5fe09c3d1480bb8b8610ac37a204d28740",
+    "demo_lock":            1,
+    "max_websites":         1
+}

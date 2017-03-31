@@ -1,8 +1,5 @@
-TODO
+TODO - v 1.0.1 beta
 
-v 1.0.1 beta
-
-- release script + move fabric to bash
 - display data - content, browsers, countries, entry pages, exit pages
 - change default range
 - display data - trends (percentage)
@@ -13,7 +10,7 @@ v 1.0.1 beta
 - user management
 - wordpress plugin
 
-v 1.0.2 beta
+TODO - v 1.0.2 beta
 
 - tests for everything
 - website - create facebook page
@@ -30,9 +27,7 @@ v 1.0.2 beta
 - API
 - exclude IPs from tracking
 
-DONE
-
-v 1.0.0 beta
+DONE - v 1.0.0 beta
 
 * buy a domain
 * buy first droplet
@@ -107,3 +102,7 @@ v 1.0.0 beta
 * exclude me from tracking
 * fixate demo time zone and don't allow changing
 * support for other databases (PostgreSQL, SQLite, MySQL)
+
+DONE - v 1.0.0 beta
+
+* release script + move fabric to bash

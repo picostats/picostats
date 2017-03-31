@@ -1,0 +1,19 @@
+#!/bin/bash
+
+mkdir picostatsnew
+cp ../picostats picostatsnew/
+cp -R ../public picostatsnew/
+cp -R ../templates picostatsnew/
+cp production.json picostatsnew/config.json
+cp ../timezones.json picostatsnew/timezones.json
+tar -czf picostatsnew.tar.gz picostatsnew/
+rm -rf picostatsnew
+scp picostatsnew.tar.gz picostats@46.101.254.59:
+
+ssh -t picostats@46.101.254.59 'tar -xzf picostatsnew.tar.gz &&
+    rm -rf picostats &&
+    mv picostatsnew picostats &&
+    rm picostatsnew.tar.gz &&
+    sudo supervisorctl reload'
+
+rm picostatsnew.tar.gz
